@@ -17,6 +17,13 @@ public class ApprovalInstanceForm {
 	private String id;
 
 	/**
+	 * customId
+	 */
+	@JSONField(name = "custom_id")
+	private String customId;
+
+
+	/**
 	 * 名称
 	 */
 	@JSONField(name = "name")
@@ -31,8 +38,8 @@ public class ApprovalInstanceForm {
 	/**
 	 * 扩展
 	 */
-	@JSONField(name = "ext")
-	private String ext;
+//	@JSONField(name = "ext")
+//	private String ext;
 
 	/**
 	 * 值

@@ -38,15 +38,17 @@ public class SystemServiceImpl implements SystemService {
 	public String syncPurchaseRequisition() {
 		List<PurchaseRequisition> purchaseRequisitionList = purchaseRequisitionList();
 //		purchaseRequisitionList = purchaseRequisitionList.stream().filter(pr -> "POREQ000005".equals(pr.getBillNo())).collect(Collectors.toList());
-//		PurchaseRequisition pr = purchaseRequisitionList.get(0);
-//		System.out.println(pr);
+
+		// 过滤掉存储中的ids
+		List<String> purchaseOrderLists = DataUtil.getIdsByFileName(DataTypeEnum.PURCHASE_ORDER.getType());
+		purchaseRequisitionList = purchaseRequisitionList.stream()
+				.filter(p -> !purchaseOrderLists.contains(p.getBillNo())).collect(Collectors.toList());
+
 		List<String> detailIds = new ArrayList<>();
 		for (PurchaseRequisition pr : purchaseRequisitionList) {
-			detailIds.add(String.valueOf(pr.getDetailId()));
+			detailIds.add(String.valueOf(pr.getBillNo()));
 		}
 		for (PurchaseRequisition pr : purchaseRequisitionList) {
-			System.out.println(pr);
-			// TODO 按启动状态过滤后本地文本记录已同步的id)
 			// 获取申请人
 			NumberAndNameType requester = pr.getRequesterId();
 			String requesterNumber = requester.getNumber();
@@ -54,6 +56,7 @@ public class SystemServiceImpl implements SystemService {
 			// 通过申请人去设置飞书审批人的
 			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_REQUISITION_APPROVAL_CODE, "9bd13a9d");
 		}
+		// 本地文本记录已同步的id
 		DataUtil.setFormIds(detailIds, DataTypeEnum.PURCHASE_ORDER.getType());
 
 		return "success";

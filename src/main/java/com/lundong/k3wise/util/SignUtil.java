@@ -6,12 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.lundong.k3wise.config.Constants;
 import com.lundong.k3wise.entity.ApprovalInstance;
 import com.lundong.k3wise.entity.PurchaseRequisition;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author RawChen
  * @date 2023-06-25 14:33
  */
+@Slf4j
 public class SignUtil {
 
 	/**
@@ -71,6 +73,29 @@ public class SignUtil {
 	 */
 	public static String getToken() {
 		return getToken(Constants.AUTHORITY_CODE);
+	}
+
+	/**
+	 * 审核（启动审核、审核、驳回）
+	 *
+	 * @param formCode		单据标识
+	 * @param formNumber	单据编号
+	 * @param status		审核动作
+	 */
+	public static void checkBill(String formCode, String formNumber, String status) {
+		String paramDetailJson = "{\"Data\": {\"FBillNo\": \"" + formNumber + "\",\"FChecker\": \"administrator\",\"FCheckDirection\": \"" + status + "\",\"FDealComment\": \"\"}}";
+		String resultDetailStr = HttpRequest.post(Constants.K3API + formCode + Constants.CHECK_BILL + getToken())
+				.body(paramDetailJson)
+				.timeout(2000)
+				.execute().body();
+		if (StringUtils.isNotEmpty(resultDetailStr)) {
+			JSONObject resultDetailObject = (JSONObject) JSON.parse(resultDetailStr);
+			if (resultDetailObject.getInteger("StatusCode") == 200) {
+				log.info("FBillNo: {},formCode: {},status: {} 启动审核/审核/驳回动作成功", formNumber, formCode, status);
+			} else {
+				log.info("FBillNo: {},formCode: {},status: {} 启动审核/审核/驳回动作失败：{}", formNumber, formCode, status, resultDetailObject.getString("Message"));
+			}
+		}
 	}
 
 	/**
