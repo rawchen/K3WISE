@@ -1,9 +1,9 @@
 package com.lundong.k3wise.controller;
 
-import com.lundong.k3wise.service.SystemService;
+import com.lundong.k3wise.service.PurchaseOrderService;
+import com.lundong.k3wise.service.PurchaseRequisitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -11,19 +11,32 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2023-06-25 14:02
  */
 @RestController
-@RequestMapping("/api/system")
 public class SystemController {
 
-    @Autowired
-    private SystemService systemService;
+	@Autowired
+	private PurchaseRequisitionService purchaseRequisitionService;
 
-    /**
-     * 同步采购申请单
-     *
-     * @return
-     */
-    @GetMapping("/syncPurchaseRequisition")
-    public String initDepartment() {
-        return systemService.syncPurchaseRequisition();
-    }
+	@Autowired
+	private PurchaseOrderService purchaseOrderService;
+
+	/**
+	 * 同步采购申请单
+	 *
+	 * @return
+	 */
+	@GetMapping("/t01")
+	public void syncPurchaseRequisition() {
+		purchaseRequisitionService.syncPurchaseRequisition();
+	}
+
+	/**
+	 * 同步采购订单
+	 *
+	 * @return
+	 */
+	@GetMapping("/t02")
+	public void syncPurchaseOrder() {
+		purchaseOrderService.syncPurchaseOrder();
+	}
+
 }

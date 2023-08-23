@@ -3,8 +3,11 @@ package com.lundong.k3wise;
 import com.alibaba.fastjson.JSONObject;
 import com.lundong.k3wise.entity.ApprovalInstance;
 import com.lundong.k3wise.entity.ApprovalInstanceForm;
+import com.lundong.k3wise.entity.PurchaseOrder;
+import com.lundong.k3wise.entity.PurchaseRequisition;
 import com.lundong.k3wise.enums.DataTypeEnum;
-import com.lundong.k3wise.service.SystemService;
+import com.lundong.k3wise.service.PurchaseOrderService;
+import com.lundong.k3wise.service.PurchaseRequisitionService;
 import com.lundong.k3wise.util.DataUtil;
 import com.lundong.k3wise.util.SignUtil;
 import org.junit.jupiter.api.Test;
@@ -13,11 +16,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+import static com.lundong.k3wise.util.SignUtil.getUserIdByName;
+
 @SpringBootTest
 class K3WiseApplicationTests {
 
 	@Autowired
-	private SystemService systemService;
+	private PurchaseRequisitionService purchaseRequisitionService;
+
+	@Autowired
+	private PurchaseOrderService purchaseOrderService;
 
 	@Test
 	void contextLoads() {
@@ -66,7 +74,29 @@ class K3WiseApplicationTests {
 
 	@Test
 	void t07() {
-		String s = systemService.syncPurchaseRequisition();
-		System.out.println(s);
+		purchaseRequisitionService.syncPurchaseRequisition();
+	}
+
+	@Test
+	void t08() {
+		String r = getUserIdByName("陈双全");
+		System.out.println(r);
+
+	}
+
+	@Test
+	void t09() {
+		List<PurchaseRequisition> purchaseRequisitionList = purchaseRequisitionService.purchaseRequisitionList();
+		for (PurchaseRequisition purchaseRequisition : purchaseRequisitionList) {
+			System.out.println(purchaseRequisition);
+		}
+	}
+
+	@Test
+	void t10() {
+		List<PurchaseOrder> purchaseOrderList = purchaseOrderService.purchaseOrderList();
+		for (PurchaseOrder order : purchaseOrderList) {
+			System.out.println(order);
+		}
 	}
 }

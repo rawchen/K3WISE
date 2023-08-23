@@ -8,13 +8,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 /**
- * 采购申请单明细
+ * 采购订单
  *
  * @author RawChen
  * @date 2023-06-25 17:15
  */
 @Data
-public class PurchaseRequisitionDetail {
+public class PurchaseOrderDetail {
 
 	@JSONField(name = "FDetailID2")
 	private Integer detailId;
@@ -38,23 +38,16 @@ public class PurchaseRequisitionDetail {
 	private String itemModel;
 
 	/**
+	 * 辅助属性
+	 */
+	@JSONField(name = "FAuxPropID")
+	private NumberAndNameType auxPropId;
+
+	/**
 	 * 单位
 	 */
 	@JSONField(name = "FUnitID")
 	private NumberAndNameType unitId;
-
-	/**
-	 * 供应商
-	 */
-	@JSONField(name = "FSupplyID")
-	private NumberAndNameType supplyId;
-
-	/**
-	 * 计划模式
-	 */
-	@JSONField(name = "FPlanMode")
-	private NumberAndNameType planMode;
-
 
 	/**
 	 * 数量
@@ -63,17 +56,47 @@ public class PurchaseRequisitionDetail {
 	private Integer fauxqty;
 
 	/**
-	 * 到货日期
+	 * 含税单价
+	 */
+	@JSONField(name = "FAuxTaxPrice")
+	private Double auxTaxPrice;
+
+	/**
+	 * 实际含税单价
+	 */
+	@JSONField(name = "FAuxPriceDiscount")
+	private Double auxPriceDiscount;
+
+	/**
+	 * 价税合计
+	 */
+	@JSONField(name = "FAllAmount")
+	private Double allAmount;
+
+	/**
+	 * 交货日期
 	 */
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@JSONField(name = "FFetchTime")
-	private LocalDateTime fetchTime;
+	@JSONField(name = "Fdate1")
+	private LocalDateTime date;
 
 	/**
-	 * 用途
+	 * 税率
 	 */
-	@JSONField(name = "Fuse")
-	private String use;
+	@JSONField(name = "FCess")
+	private Double cess;
+
+	/**
+	 * 备注
+	 */
+	@JSONField(name = "Fnote")
+	private String note;
+
+	/**
+	 * 源单单号
+	 */
+	@JSONField(name = "FSourceBillNo")
+	private String sourceBillNo;
 
 }

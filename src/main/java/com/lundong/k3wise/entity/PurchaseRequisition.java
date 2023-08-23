@@ -23,9 +23,6 @@ public class PurchaseRequisition {
 	@JSONField(name = "FTranType")
 	private Integer tranType;
 
-	@JSONField(name = "FDetailID2")
-	private Integer detailId;
-
 	@JSONField(name = "FNumber")
 	private String number;
 

@@ -83,7 +83,7 @@ public class EventController {
 						String status = event.getEvent().getStatus();
 
 						if (ApprovalInstanceEnum.APPROVED.getType().equals(status)
-								|| ApprovalInstanceEnum.CANCELED.getType().equals(status) ) {
+								|| ApprovalInstanceEnum.CANCELED.getType().equals(status)) {
 							// 根据审批实例ID查询审批单
 							ApprovalInstance approvalInstance = SignUtil.approvalInstanceDetail(instanceCode);
 							// 审批实例的单据号
@@ -106,7 +106,7 @@ public class EventController {
 								// 取消已同步单据标识
 								DataUtil.removeByFileName(formNumber, DataTypeEnum.PURCHASE_REQUISITION.getType());
 								// 退回单据状态为保存状态（驳回）
-								SignUtil.checkBill(formCode, formNumber, CheckBillStatusEnum.AUDIT.getCode());
+								SignUtil.checkBill(formCode, formNumber, CheckBillStatusEnum.REJECT.getCode());
 
 							}
 
