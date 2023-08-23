@@ -1,5 +1,6 @@
 package com.lundong.k3wise.controller;
 
+import com.lundong.k3wise.service.PaymentRequestService;
 import com.lundong.k3wise.service.PurchaseOrderService;
 import com.lundong.k3wise.service.PurchaseRequisitionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class SystemController {
 	@Autowired
 	private PurchaseOrderService purchaseOrderService;
 
+	@Autowired
+	private PaymentRequestService paymentRequestService;
+
 	/**
 	 * 同步采购申请单
 	 *
@@ -37,6 +41,16 @@ public class SystemController {
 	@GetMapping("/t02")
 	public void syncPurchaseOrder() {
 		purchaseOrderService.syncPurchaseOrder();
+	}
+
+	/**
+	 * 同步付款申请单
+	 *
+	 * @return
+	 */
+	@GetMapping("/t03")
+	public void syncPaymentRequest() {
+		paymentRequestService.syncPaymentRequest();
 	}
 
 }

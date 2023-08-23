@@ -1,9 +1,6 @@
 package com.lundong.k3wise.util;
 
-import com.lundong.k3wise.entity.PurchaseOrder;
-import com.lundong.k3wise.entity.PurchaseOrderDetail;
-import com.lundong.k3wise.entity.PurchaseRequisition;
-import com.lundong.k3wise.entity.PurchaseRequisitionDetail;
+import com.lundong.k3wise.entity.*;
 
 import java.time.format.DateTimeFormatter;
 
@@ -96,8 +93,54 @@ public class StringUtil {
 					.replace("业务员", nullIsEmpty(temp.getEmpId().getName()))
 					.replace("detailJson", detailResultJson.toString());
 			return json;
-		} else if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
+		} else if (PaymentRequest.class.isAssignableFrom(p.getClass())) {
+			// 付款申请单
+			PaymentRequest temp = (PaymentRequest) p;
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"单据日期\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"单据号\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"付款类型\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"核算项目类别\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"核算项目\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"金额\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"核算项目开户银行\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"核算项目银行账号\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"核算项目户名\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"付款理由\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			// 构建明细
+			StringBuilder detailResultJson = new StringBuilder();
+			for (PaymentRequestDetail detail : temp.getDetail()) {
+				String detailJson = "[{\"id\":\"d1\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"数量\"},{\"id\":\"d7\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d8\",\"type\":\"input\",\"value\":\"价税合计\"},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d10\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"源单单号\"}]";
+				detailJson = detailJson
+						.replace("行号", nullIsEmpty(detail.getItemId().getNumber()))
+						.replace("源单类型", nullIsEmpty(detail.getItemId().getName()))
+						.replace("源单单号", nullIsEmpty(detail.getBillNoSrc()))
+						.replace("合同号", nullIsEmpty(detail.getContractNo()))
+						.replace("订单单号", nullIsEmpty(detail.getOrderNo()))
+						.replace("申请付款数量", nullIsEmpty(detail.getApplyQuantity()))
+						.replace("申请付款金额", nullIsEmpty(detail.getApplyAmountFor()))
+						.replace("产品代码", nullIsEmpty(detail.getItemId().getNumber()))
+						.replace("产品名称", nullIsEmpty(detail.getItemId().getName()))
+						.replace("规格型号", nullIsEmpty(detail.getBaseProperty1()))
+						.replace("计量单位", nullIsEmpty(detail.getBase2().getName()))
+						.replace("数量", nullIsEmpty(detail.getQuantity()))
+						.replace("含税单价", nullIsEmpty(detail.getAuxTaxPrice()))
+						.replace("选单单据金额", nullIsEmpty(detail.getAmountForSrc()))
+						.replace("费用项目代码", nullIsEmpty(detail.getFeeObjId().getNumber()))
+						.replace("费用项目名称", nullIsEmpty(detail.getFeeObjId().getName()));
 
+				detailJson += ",";
+				detailResultJson.append(detailJson);
+			}
+
+			if (temp.getDetail().size() > 0) {
+				detailResultJson = new StringBuilder(detailResultJson.substring(0, detailResultJson.length() - 1));
+			}
+
+			json = json
+					.replace("单据日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(temp.getDate()))
+					.replace("单据号", nullIsEmpty(temp.getNumber()))
+					.replace("付款类型", nullIsEmpty(temp.getPayType()))
+					.replace("核算项目类别", nullIsEmpty(temp.getItemClassId().getName()))
+					.replace("核算项目", nullIsEmpty(temp.getCustomer().getName()))
+					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
+					.replace("金额", nullIsEmpty(temp.getAmountFor()))
+					.replace("核算项目开户银行", nullIsEmpty(temp.getRpBank()))
+					.replace("核算项目银行账号", nullIsEmpty(temp.getBankAcct()))
+					.replace("核算项目户名", nullIsEmpty(temp.getBankAcctName()))
+					.replace("付款理由", nullIsEmpty(temp.getExplanation()))
+					.replace("detailJson", detailResultJson.toString());
+			return json;
 		} else if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
 
 		} else if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
@@ -127,6 +170,20 @@ public class StringUtil {
 	 * @return
 	 */
 	public static String nullIsEmpty(Double d) {
+		if (d == null) {
+			return "";
+		} else {
+			return String.valueOf(d);
+		}
+	}
+
+	/**
+	 * null转为空（Integer）
+	 *
+	 * @param d
+	 * @return
+	 */
+	private static CharSequence nullIsEmpty(Integer d) {
 		if (d == null) {
 			return "";
 		} else {

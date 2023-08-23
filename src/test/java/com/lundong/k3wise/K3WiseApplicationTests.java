@@ -1,11 +1,9 @@
 package com.lundong.k3wise;
 
 import com.alibaba.fastjson.JSONObject;
-import com.lundong.k3wise.entity.ApprovalInstance;
-import com.lundong.k3wise.entity.ApprovalInstanceForm;
-import com.lundong.k3wise.entity.PurchaseOrder;
-import com.lundong.k3wise.entity.PurchaseRequisition;
+import com.lundong.k3wise.entity.*;
 import com.lundong.k3wise.enums.DataTypeEnum;
+import com.lundong.k3wise.service.PaymentRequestService;
 import com.lundong.k3wise.service.PurchaseOrderService;
 import com.lundong.k3wise.service.PurchaseRequisitionService;
 import com.lundong.k3wise.util.DataUtil;
@@ -26,6 +24,9 @@ class K3WiseApplicationTests {
 
 	@Autowired
 	private PurchaseOrderService purchaseOrderService;
+
+	@Autowired
+	private PaymentRequestService paymentRequestService;
 
 	@Test
 	void contextLoads() {
@@ -97,6 +98,14 @@ class K3WiseApplicationTests {
 		List<PurchaseOrder> purchaseOrderList = purchaseOrderService.purchaseOrderList();
 		for (PurchaseOrder order : purchaseOrderList) {
 			System.out.println(order);
+		}
+	}
+
+	@Test
+	void t11() {
+		List<PaymentRequest> paymentRequestList = paymentRequestService.paymentRequestList();
+		for (PaymentRequest r : paymentRequestList) {
+			System.out.println(r);
 		}
 	}
 }

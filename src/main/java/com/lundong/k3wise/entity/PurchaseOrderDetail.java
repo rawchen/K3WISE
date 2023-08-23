@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 /**
- * 采购订单
+ * 采购订单明细
  *
  * @author RawChen
  * @date 2023-06-25 17:15
