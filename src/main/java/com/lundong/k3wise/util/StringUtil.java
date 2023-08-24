@@ -141,8 +141,49 @@ public class StringUtil {
 					.replace("付款理由", nullIsEmpty(temp.getExplanation()))
 					.replace("detailJson", detailResultJson.toString());
 			return json;
-		} else if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
+		} else if (PurchaseContract.class.isAssignableFrom(p.getClass())) {
+			// 采购合同/合同(应付)
+			PurchaseContract temp = (PurchaseContract) p;
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"合同种类\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"合同日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"合同名称\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"合同号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"付款条件\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"核算项目\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"总金额\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"附注\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			// 构建明细
+			StringBuilder detailResultJson = new StringBuilder();
+			for (PurchaseContractDetail detail : temp.getDetail()) {
+				String detailJson = "[{\"id\":\"d1\",\"type\":\"input\",\"value\":\"行号\"},{\"id\":\"d2\",\"type\":\"input\",\"value\":\"产品代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"产品名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"计量单位\"},{\"id\":\"d7\",\"type\":\"input\",\"value\":\"数量\"},{\"id\":\"d8\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"不含税单价\"},{\"id\":\"d10\",\"type\":\"input\",\"value\":\"价税合计\"},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"税额\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"金额\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"备注\"}]";
+				detailJson = detailJson
+						.replace("行号", nullIsEmpty(detail.getIndex3()))
+						.replace("产品代码", nullIsEmpty(detail.getProductId2().getNumber())
+						.replace("产品名称", nullIsEmpty(detail.getItemId40828()))
+						.replace("规格型号", nullIsEmpty(detail.getItemId40891()))
+						.replace("辅助属性", nullIsEmpty(detail.getAuxPropId().getName())))
+						.replace("计量单位", nullIsEmpty(detail.getUnitId().getName()))
+						.replace("数量", nullIsEmpty(detail.getQuantity()))
+						.replace("含税单价", nullIsEmpty(detail.getTaxPriceFor()))
+						.replace("不含税单价", nullIsEmpty(detail.getPriceFor()))
+						.replace("价税合计", nullIsEmpty(detail.getAmountIncludeTaxFor()))
+						.replace("税率", nullIsEmpty(detail.getTaxRate()))
+						.replace("税额", nullIsEmpty(detail.getTaxFor()))
+						.replace("金额", nullIsEmpty(detail.getAmountFor3()))
+						.replace("备注", nullIsEmpty(detail.getExplanation()));
+				detailJson += ",";
+				detailResultJson.append(detailJson);
+			}
 
+			if (temp.getDetail().size() > 0) {
+				detailResultJson = new StringBuilder(detailResultJson.substring(0, detailResultJson.length() - 1));
+			}
+
+			json = json
+					.replace("合同种类", nullIsEmpty(temp.getContractTypeId()))
+					.replace("合同日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(temp.getDate()))
+					.replace("合同名称", nullIsEmpty(temp.getContractName()))
+					.replace("合同号", nullIsEmpty(temp.getContractNo()))
+					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
+					.replace("付款条件", nullIsEmpty(temp.getPayCondition().getName()))
+					.replace("核算项目", nullIsEmpty(temp.getCustomer().getName()))
+					.replace("总金额", nullIsEmpty(temp.getTotalAmountFor()))
+					.replace("附注", nullIsEmpty(temp.getText()))
+					.replace("detailJson", detailResultJson.toString());
+			return json;
 		} else if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
 
 		}

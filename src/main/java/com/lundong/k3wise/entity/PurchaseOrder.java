@@ -84,7 +84,7 @@ public class PurchaseOrder {
 	private NumberAndNameType empId;
 
 	/**
-	 * 采购申请单明细
+	 * 明细
 	 */
 	@JSONField(name = "detail")
 	private List<PurchaseOrderDetail> detail;

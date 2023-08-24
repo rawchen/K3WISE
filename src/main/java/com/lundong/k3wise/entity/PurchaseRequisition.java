@@ -65,7 +65,7 @@ public class PurchaseRequisition {
 	private String note;
 
 	/**
-	 * 采购申请单明细
+	 * 明细
 	 */
 	@JSONField(name = "detail")
 	private List<PurchaseRequisitionDetail> detail;
