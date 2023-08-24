@@ -50,8 +50,8 @@ public class PurchaseContractServiceImpl implements PurchaseContractService {
 
 		List<String> billNumbers = new ArrayList<>();
 		for (PurchaseContract pr : purchaseContractList) {
-			// 获取申请人
-			NumberAndNameType requester = pr.getRequesterId();
+			// 获取业务员
+			NumberAndNameType requester = pr.getEmployee();
 
 			// 通过申请人名称获取审核人明细中的手机号或邮箱
 			String userId = SignUtil.getUserIdByName(requester.getName());

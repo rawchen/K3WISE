@@ -21,6 +21,12 @@ public class PurchaseContract {
 	private Integer contractId;
 
 	/**
+	 * 业务员
+	 */
+	@JSONField(name = "FEmployee")
+	private NumberAndNameType employee;
+
+	/**
 	 * 合同种类
 	 */
 	@JSONField(name = "FContractTypeID")
