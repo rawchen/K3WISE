@@ -156,7 +156,6 @@ public class StringUtil {
 			for (PurchaseContractDetail detail : temp.getDetail()) {
 				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"产品代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"产品名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"计量单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":数量},{\"id\":\"d8\",\"type\":\"input\",\"value\":\"已含税单价\"},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"不含税单价\"},{\"id\":\"d10\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d12\",\"type\":\"number\",\"value\":税额},{\"id\":\"d13\",\"type\":\"number\",\"value\":金额},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"备注\"}]";
 				detailJson = detailJson
-						.replace("行号", nullIsEmpty(detail.getIndex3()))
 						.replace("产品代码", nullIsEmpty(detail.getProductId2().getNumber()))
 						.replace("产品名称", nullIsEmpty(detail.getItemId40828()))
 						.replace("规格型号", nullIsEmpty(detail.getItemId40891()))
@@ -190,8 +189,49 @@ public class StringUtil {
 					.replace("附注", nullIsEmpty(temp.getText()))
 					.replace("detailJson", detailResultJson.toString());
 			return json;
-		} else if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
+		} else if (OutsourcingOrder.class.isAssignableFrom(p.getClass())) {
+			// 委外订单
+			OutsourcingOrder temp = (OutsourcingOrder) p;
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"部门\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			// 构建明细
+			StringBuilder detailResultJson = new StringBuilder();
+			for (OutsourcingOrderDetail detail : temp.getDetail()) {
+				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":总数量},{\"id\":\"d8\",\"type\":\"number\",\"value\":库存数量},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d10\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"BOM编号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"备注\"}]";
+				detailJson = detailJson
+						.replace("物料代码", nullIsEmpty(detail.getItemId().getNumber()))
+						.replace("物料名称", nullIsEmpty(detail.getItemName()))
+						.replace("规格型号", nullIsEmpty(detail.getSpecification()))
+						.replace("辅助属性", nullIsEmpty(detail.getAuxPropId().getName()))
+						.replace("单位", nullIsEmpty(detail.getUnitId().getName()))
+						.replace("总数量", nullIsZero(detail.getFauxqty()))
+						.replace("库存数量", nullIsZero(detail.getStockQtyOnlyForShow()))
+						.replace("含税单价", nullIsEmpty(detail.getAuxTaxPrice()))
+						.replace("价税合计", nullIsZero(detail.getAllAmount()))
+						.replace("交货日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(detail.getFetchDate()))
+						.replace("税率", nullIsEmpty(detail.getTaxRate()))
+						.replace("BOM编号", nullIsEmpty(detail.getBomInterId().getNumber()))
+						.replace("源单单号", nullIsEmpty(detail.getBillNoSrc()))
+						.replace("备注", nullIsEmpty(detail.getNote()));
+				detailJson += ",";
+				detailResultJson.append(detailJson);
+			}
 
+			if (temp.getDetail().size() > 0) {
+				detailResultJson = new StringBuilder(detailResultJson.substring(0, detailResultJson.length() - 1));
+			}
+
+			json = json
+					.replace("供应商", nullIsEmpty(temp.getSupplyId().getName()))
+					.replace("日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(temp.getDate()))
+					.replace("单据编号", nullIsEmpty(temp.getBillNo()))
+					.replace("结算方式", nullIsEmpty(temp.getSettleStyle().getName()))
+					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
+					.replace("部门", nullIsEmpty(temp.getDepartment().getName()))
+					.replace("业务员", nullIsEmpty(temp.getEmployee().getName()))
+					.replace("汇率", nullIsEmpty(temp.getExchangeRate()))
+					.replace("摘要", nullIsEmpty(temp.getSummary()))
+					.replace("detailJson", detailResultJson.toString());
+			return json;
 		}
 		return null;
 	}

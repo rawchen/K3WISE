@@ -6,10 +6,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lundong.k3wise.config.Constants;
 import com.lundong.k3wise.entity.NumberAndNameType;
-import com.lundong.k3wise.entity.PurchaseContract;
-import com.lundong.k3wise.entity.PurchaseContractDetail;
+import com.lundong.k3wise.entity.OutsourcingOrder;
+import com.lundong.k3wise.entity.OutsourcingOrderDetail;
 import com.lundong.k3wise.enums.DataTypeEnum;
-import com.lundong.k3wise.service.PurchaseContractService;
+import com.lundong.k3wise.service.OutsourcingOrderService;
 import com.lundong.k3wise.util.DataUtil;
 import com.lundong.k3wise.util.SignUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,57 +23,57 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 采购合同/合同(应付)
+ * 委外订单
  *
  * @author RawChen
- * @date 2023-08-23 17:48
+ * @date 2023-08-25 16:32
  */
 @Slf4j
 @Service
-public class PurchaseContractServiceImpl implements PurchaseContractService {
+public class OutsourcingOrderServiceImpl implements OutsourcingOrderService {
 
 	/**
-	 * 定时同步采购合同/合同(应付)
+	 * 定时同步委外订单
 	 *
 	 * @return
 	 */
-	@Scheduled(cron = "0 0 3 ? * *")
+	@Scheduled(cron = "0 0 5 ? * *")
 	@Override
-	public void syncPurchaseContract() {
-		List<PurchaseContract> purchaseContractList = purchaseContractList();
-		log.info("状态为4（启动状态）的采购合同/合同(应付)数量：{}", purchaseContractList.size());
+	public void syncOutsourcingOrder() {
+		List<OutsourcingOrder> outsourcingOrderList = outsourcingOrderList();
+		log.info("状态为4（启动状态）的委外订单数量：{}", outsourcingOrderList.size());
 
 		// 过滤掉存储中的ids
-		List<String> purchaseOrderLists = DataUtil.getIdsByFileName(DataTypeEnum.PURCHASE_CONTRACT.getType());
-		purchaseContractList = purchaseContractList.stream()
-				.filter(p -> !purchaseOrderLists.contains(p.getContractNo())).collect(Collectors.toList());
+		List<String> purchaseOrderLists = DataUtil.getIdsByFileName(DataTypeEnum.OUTSOURCING_ORDER.getType());
+		outsourcingOrderList = outsourcingOrderList.stream()
+				.filter(p -> !purchaseOrderLists.contains(p.getBillNo())).collect(Collectors.toList());
 
 		List<String> billNumbers = new ArrayList<>();
-		for (PurchaseContract pr : purchaseContractList) {
+		for (OutsourcingOrder pr : outsourcingOrderList) {
 			// 获取业务员
 			NumberAndNameType requester = pr.getEmployee();
 
 			// 通过申请人名称获取审核人明细中的手机号或邮箱
 			String userId = SignUtil.getUserIdByName(requester.getName());
 			// 生成审批实例
-			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_CONTRACT_APPROVAL_CODE, userId);
+			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.OUTSOURCING_ORDER_APPROVAL_CODE, userId);
 			if (instanceCode != null) {
-				billNumbers.add(String.valueOf(pr.getContractNo()));
+				billNumbers.add(String.valueOf(pr.getBillNo()));
 			}
 		}
 		// 本地文本记录已同步的id
-		DataUtil.setFormIds(billNumbers, DataTypeEnum.PURCHASE_CONTRACT.getType());
+		DataUtil.setFormIds(billNumbers, DataTypeEnum.OUTSOURCING_ORDER.getType());
 	}
 
 	/**
-	 * 获取K3WISE状态为4（启动状态）的采购合同/合同(应付)
+	 * 获取K3WISE状态为4（启动状态）的委外订单列表
 	 *
 	 * @return
 	 */
-	public List<PurchaseContract> purchaseContractList() {
-		List<PurchaseContract> prList = new ArrayList<>();
-		String paramJson = "{\"Data\": {\"Fields\": \"FContractNo,FContractName,Fdate,FMultiCheckStatus\",\"Top\": \"100\",\"PageSize\": \"10000\",\"PageIndex\": \"1\",\"Filter\": \"FMultiCheckStatus='4'\",\"OrderBy\": \"\",\"SelectPage\": \"2\"}}";
-		String resultStr = HttpRequest.post(Constants.K3API + Constants.PURCHASE_CONTRACT + Constants.GET_LIST + SignUtil.getToken())
+	public List<OutsourcingOrder> outsourcingOrderList() {
+		List<OutsourcingOrder> prList = new ArrayList<>();
+		String paramJson = "{\"Data\": {\"Fields\": \"FBillNo,Fdate,FItemName,FMultiCheckStatus\",\"Top\": \"100\",\"PageSize\": \"10000\",\"PageIndex\": \"1\",\"Filter\": \"FMultiCheckStatus='4'\",\"OrderBy\": \"\",\"SelectPage\": \"2\"}}";
+		String resultStr = HttpRequest.post(Constants.K3API + Constants.OUTSOURCING_ORDER + Constants.GET_LIST + SignUtil.getToken())
 				.body(paramJson)
 				.timeout(2000)
 				.execute().body();
@@ -86,14 +86,14 @@ public class PurchaseContractServiceImpl implements PurchaseContractService {
 					JSONArray dataList = data.getJSONArray("DATA");
 					List<String> billNoList = new ArrayList<>();
 					for (int i = 0; i < dataList.size(); i++) {
-						billNoList.add(dataList.getJSONObject(i).getString("FContractNo"));
+						billNoList.add(dataList.getJSONObject(i).getString("FBillNo"));
 					}
 					billNoList = billNoList.stream().distinct().collect(Collectors.toList());
 
 					for (String billNo : billNoList) {
 						// 调用单据查询接口获取明细字段
 						String paramDetailJson = "{\"Data\":{\"FBillNo\":\"" + billNo + "\"},\"GetProperty\":false}";
-						String resultDetailStr = HttpRequest.post(Constants.K3API + Constants.PURCHASE_CONTRACT + Constants.GET_DETAIL + SignUtil.getToken())
+						String resultDetailStr = HttpRequest.post(Constants.K3API + Constants.OUTSOURCING_ORDER + Constants.GET_DETAIL + SignUtil.getToken())
 								.body(paramDetailJson)
 								.timeout(2000)
 								.execute().body();
@@ -103,12 +103,11 @@ public class PurchaseContractServiceImpl implements PurchaseContractService {
 								JSONObject dataDetail = resultDetailObject.getJSONObject("Data");
 								if (dataDetail != null) {
 									JSONObject dataForm = dataDetail.getJSONArray("Page1").getJSONObject(0);
-									PurchaseContract pr = dataForm.toJavaObject(PurchaseContract.class);
-									JSONArray dataFormDetails = dataDetail.getJSONArray("Page3");
-									List<PurchaseContractDetail> purchaseContractDetails = dataFormDetails.toJavaList(PurchaseContractDetail.class);
-									pr.setDetail(purchaseContractDetails);
+									OutsourcingOrder pr = dataForm.toJavaObject(OutsourcingOrder.class);
+									JSONArray dataFormDetails = dataDetail.getJSONArray("Page2");
+									List<OutsourcingOrderDetail> outsourcingOrderDetails = dataFormDetails.toJavaList(OutsourcingOrderDetail.class);
+									pr.setDetail(outsourcingOrderDetails);
 									prList.add(pr);
-
 								}
 							}
 						}

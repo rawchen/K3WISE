@@ -59,7 +59,7 @@ public class PurchaseRequisition {
 	private NumberAndNameType deptId;
 
 	/**
-	 * 使用部门
+	 * 描述
 	 */
 	@JSONField(name = "Fnote")
 	private String note;

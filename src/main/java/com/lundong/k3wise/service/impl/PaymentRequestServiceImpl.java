@@ -37,7 +37,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 	 *
 	 * @return
 	 */
-	@Scheduled(cron = "0 0 3 ? * *")
+	@Scheduled(cron = "0 0 4 ? * *")
 	@Override
 	public void syncPaymentRequest() {
 		List<PaymentRequest> paymentRequestList = paymentRequestList();
