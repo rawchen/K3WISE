@@ -86,7 +86,7 @@ public class PurchaseContractServiceImpl implements PurchaseContractService {
 					JSONArray dataList = data.getJSONArray("DATA");
 					List<String> billNoList = new ArrayList<>();
 					for (int i = 0; i < dataList.size(); i++) {
-						billNoList.add(dataList.getJSONObject(i).getString("FBillNo"));
+						billNoList.add(dataList.getJSONObject(i).getString("FContractNo"));
 					}
 					billNoList = billNoList.stream().distinct().collect(Collectors.toList());
 

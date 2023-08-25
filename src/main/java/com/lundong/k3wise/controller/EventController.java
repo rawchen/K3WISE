@@ -62,21 +62,27 @@ public class EventController {
 							return;
 						}
 						String formCode = "";
+						String formCodeName = "";
 						switch (approvalCode) {
 							case Constants.PURCHASE_REQUISITION_APPROVAL_CODE:
 								formCode = Constants.PURCHASE_REQUISITION;
+								formCodeName = "单据编号";
 								break;
 							case Constants.PURCHASE_ORDER_APPROVAL_CODE:
 								formCode = Constants.PURCHASE_ORDER;
+								formCodeName = "编号";
 								break;
 							case Constants.PAYMENT_REQUEST_APPROVAL_CODE:
 								formCode = Constants.PAYMENT_REQUEST;
+								formCodeName = "单据号";
 								break;
 							case Constants.PURCHASE_CONTRACT_APPROVAL_CODE:
 								formCode = Constants.PURCHASE_CONTRACT;
+								formCodeName = "合同号";
 								break;
 							case Constants.OUTSOURCING_ORDER_APPROVAL_CODE:
 								formCode = Constants.OUTSOURCING_ORDER;
+								formCodeName = "单据编号";
 								break;
 						}
 						String instanceCode = event.getEvent().getInstanceCode();
@@ -91,7 +97,7 @@ public class EventController {
 							List<ApprovalInstanceForm> approvalInstanceForms =
 									JSONArray.parseArray(approvalInstance.getForm(), ApprovalInstanceForm.class);
 							for (ApprovalInstanceForm approvalInstanceForm : approvalInstanceForms) {
-								if ("单据号".equals(approvalInstanceForm.getName())) {
+								if (formCodeName.equals(approvalInstanceForm.getName())) {
 									formNumber = approvalInstanceForm.getValue();
 									break;
 								}

@@ -116,13 +116,13 @@ public class SignUtil {
 		object.put("approval_code", approvalCode);
 		object.put("user_id", userId);
 		object.put("form", StringUtil.combinFormString(pr));
-		log.debug("combinFormString: {}", StringUtil.combinFormString(pr));
+		log.info("combinFormString: {}", StringUtil.combinFormString(pr));
 		String resultStr = HttpRequest.post("https://open.feishu.cn/open-apis/approval/v4/instances")
 				.header("Authorization", "Bearer " + accessToken)
 				.form(object)
 				.timeout(2000)
 				.execute().body();
-		log.debug("generateApprovalInstance(): {}", resultStr);
+		log.info("generateApprovalInstance(): {}", resultStr);
 		if (StringUtils.isNotEmpty(resultStr)) {
 			JSONObject resultObject = JSON.parseObject(resultStr);
 			if (resultObject.getInteger("code") == 0) {

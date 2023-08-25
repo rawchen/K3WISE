@@ -20,6 +20,12 @@ public class PurchaseRequisitionDetail {
 	private Integer detailId;
 
 	/**
+	 * 行号
+	 */
+	@JSONField(name = "FEntryID2")
+	private Integer entryID2;
+
+	/**
 	 * 物料代码
 	 */
 	@JSONField(name = "FItemID")
@@ -38,6 +44,12 @@ public class PurchaseRequisitionDetail {
 	private String itemModel;
 
 	/**
+	 * 辅助属性
+	 */
+	@JSONField(name = "FAuxPropID")
+	private NumberAndNameType auxPropId;
+
+	/**
 	 * 单位
 	 */
 	@JSONField(name = "FUnitID")
@@ -50,17 +62,24 @@ public class PurchaseRequisitionDetail {
 	private NumberAndNameType supplyId;
 
 	/**
-	 * 计划模式
-	 */
-	@JSONField(name = "FPlanMode")
-	private NumberAndNameType planMode;
-
-
-	/**
 	 * 数量
 	 */
 	@JSONField(name = "Fauxqty")
-	private Integer fauxqty;
+	private Double fauxqty;
+
+	/**
+	 * 辅助数量
+	 */
+	@JSONField(name = "FSecQty")
+	private Double secQty;
+
+	/**
+	 * 建议采购日期
+	 */
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JSONField(name = "FAPurchTime")
+	private LocalDateTime aPurchTime;
 
 	/**
 	 * 到货日期
@@ -71,9 +90,39 @@ public class PurchaseRequisitionDetail {
 	private LocalDateTime fetchTime;
 
 	/**
+	 * 客户BOM
+	 */
+	@JSONField(name = "FBomInterID")
+	private NumberAndNameType bomInterId;
+
+	/**
+	 * 提前期
+	 */
+	@JSONField(name = "FLeadTime")
+	private Double leadTime;
+
+	/**
 	 * 用途
 	 */
 	@JSONField(name = "Fuse")
 	private String use;
+
+	/**
+	 * 源单单号
+	 */
+	@JSONField(name = "FSourceBillNo")
+	private String sourceBillNo;
+
+	/**
+	 * 计划模式
+	 */
+	@JSONField(name = "FPlanMode")
+	private NumberAndNameType planMode;
+
+	/**
+	 * 计划跟踪号
+	 */
+	@JSONField(name = "FMTONo")
+	private String mtono;
 
 }

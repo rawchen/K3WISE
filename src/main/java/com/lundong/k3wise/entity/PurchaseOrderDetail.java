@@ -20,6 +20,12 @@ public class PurchaseOrderDetail {
 	private Integer detailId;
 
 	/**
+	 * 行号
+	 */
+	@JSONField(name = "FEntryID2")
+	private Integer entryID2;
+
+	/**
 	 * 物料代码
 	 */
 	@JSONField(name = "FItemID")
@@ -53,7 +59,7 @@ public class PurchaseOrderDetail {
 	 * 数量
 	 */
 	@JSONField(name = "Fauxqty")
-	private Integer fauxqty;
+	private Double fauxqty;
 
 	/**
 	 * 含税单价
