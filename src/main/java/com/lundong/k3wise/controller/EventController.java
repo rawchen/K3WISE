@@ -53,6 +53,8 @@ public class EventController {
 					new Thread(() -> {
 						// 获取审批实例code
 						String approvalCode = event.getEvent().getApprovalCode();
+						String instanceCode = event.getEvent().getInstanceCode();
+						String status = event.getEvent().getStatus();
 						// 判断通过的审批code是否为系统的五个审批单
 						if (!Constants.PURCHASE_REQUISITION_APPROVAL_CODE.equals(approvalCode)
 								&& !Constants.PURCHASE_ORDER_APPROVAL_CODE.equals(approvalCode)
@@ -85,8 +87,6 @@ public class EventController {
 								formCodeName = "单据编号";
 								break;
 						}
-						String instanceCode = event.getEvent().getInstanceCode();
-						String status = event.getEvent().getStatus();
 
 						if (ApprovalInstanceEnum.APPROVED.getType().equals(status)
 								|| ApprovalInstanceEnum.CANCELED.getType().equals(status)) {

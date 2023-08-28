@@ -53,8 +53,10 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 			// 获取申请人
 			NumberAndNameType requester = pr.getRequesterId();
 
-			// 通过申请人名称获取审核人明细中的手机号或邮箱
-			String userId = SignUtil.getUserIdByName(requester.getName());
+//			// 通过名称获取审核人明细中的手机号或邮箱
+//			String userId = SignUtil.getUserIdByName(requester.getName());
+			// 通过编号获取手机号，再根据手机号获取userId，如果手机号匹配为空就姓名匹配
+			String userId = SignUtil.getUserIdByEmployee(requester);
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_REQUISITION_APPROVAL_CODE, userId);
 			if (instanceCode != null) {
@@ -64,6 +66,7 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 		// 本地文本记录已同步的id
 		DataUtil.setFormIds(billNumbers, DataTypeEnum.PURCHASE_REQUISITION.getType());
 	}
+
 
 	/**
 	 * 获取K3WISE状态为4（启动状态）的采购申请单列表

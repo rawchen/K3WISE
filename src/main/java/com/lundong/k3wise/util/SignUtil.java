@@ -5,13 +5,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lundong.k3wise.config.Constants;
-import com.lundong.k3wise.entity.ApprovalInstance;
-import com.lundong.k3wise.entity.FeishuUser;
+import com.lundong.k3wise.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ import java.util.List;
  * @date 2023-06-25 14:33
  */
 @Slf4j
+@Component
 public class SignUtil {
 
 	/**
@@ -244,5 +246,128 @@ public class SignUtil {
 	public static String getUserIdByName(String name) {
 		String accessToken = getAccessToken(Constants.APP_ID_FEISHU, Constants.APP_SECRET_FEISHU);
 		return getUserIdByName(accessToken, name);
+	}
+
+	/**
+	 * 通过手机号获取userId
+	 *
+	 * @param phone
+	 * @return
+	 */
+	public static String getUserIdByPhone(String accessToken, String phone) {
+		List<FeishuUser> users = new ArrayList<>();
+		String pageToken = "";
+		while (true) {
+			String resultStr = HttpRequest.get("https://open.feishu.cn/open-apis/ehr/v1/employees" +
+							"?page_size=100&status=2&status=4&user_id_type=user_id&view=basic" +
+							(!StringUtil.isEmpty(pageToken) ? "&page_token=" : "") + pageToken)
+					.header("Authorization", "Bearer " + accessToken)
+					.execute()
+					.body();
+			JSONObject jsonObject = JSON.parseObject(resultStr);
+			if (!"0".equals(jsonObject.getString("code"))) {
+				return "";
+			}
+			JSONObject data = (JSONObject) jsonObject.get("data");
+			JSONArray items = (JSONArray) data.get("items");
+			for (int i = 0; i < items.size(); i++) {
+				// 构造飞书用户对象
+				FeishuUser feishuUser = items.getJSONObject(i)
+						.getJSONObject("system_fields")
+						.toJavaObject(FeishuUser.class);
+				feishuUser.setUserId(items.getJSONObject(i).getString("user_id"));
+				if (items.getJSONObject(i).getJSONObject("system_fields")
+						.getJSONObject("job") != null) {
+					feishuUser.setJobTitle(items.getJSONObject(i)
+							.getJSONObject("system_fields")
+							.getJSONObject("job")
+							.getString("name"));
+				}
+				users.add(feishuUser);
+			}
+			if ((boolean) data.get("has_more")) {
+				pageToken = data.getString("page_token");
+			} else {
+				break;
+			}
+		}
+
+		for (FeishuUser user : users) {
+			String mobile = user.getMobile();
+			if (mobile != null && mobile.contains("(+86) ")) {
+				mobile = mobile.substring(6);
+			}
+			if (phone.equals(mobile)) {
+				return user.getUserId();
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * 通过手机号获取userId
+	 *
+	 * @param phone
+	 * @return
+	 */
+	public static String getUserIdByPhone(String phone) {
+		String accessToken = getAccessToken(Constants.APP_ID_FEISHU, Constants.APP_SECRET_FEISHU);
+		return getUserIdByPhone(accessToken, phone);
+	}
+
+	/**
+	 * 通过金蝶职员编号获取userId
+	 *
+	 * @param requester		职员
+	 * @return
+	 */
+	public static String getUserIdByEmployee(NumberAndNameType requester) {
+		String employeePhone = "";
+		List<Employee> employeeList = employeeList();
+		for (Employee employee : employeeList) {
+			if (employee.getNumber() != null && requester.getNumber().equals(employee.getNumber())) {
+				employeePhone = employee.getPhone();
+			}
+		}
+		// 如果手机号不是空的就用手机号匹配
+		if (!StringUtil.isEmpty(employeePhone)) {
+			String result = getUserIdByPhone(employeePhone);
+			if (StringUtil.isEmpty(result)) {
+				return getUserIdByName(requester.getName());
+			}
+		} else {
+			// 如果手机号是空的就用名字匹配
+			return getUserIdByName(requester.getName());
+		}
+		return "";
+	}
+
+	/**
+	 * 金蝶职员列表
+	 *
+	 * @return
+	 */
+	public static List<Employee> employeeList() {
+		List<OutsourcingOrder> prList = new ArrayList<>();
+		String paramJson = "{\"Data\": {\"Fields\": \"FNumber,FName,FMobilePhone\",\"Top\": \"100\"," +
+				"\"PageSize\": \"10000\",\"PageIndex\": \"1\",\"Filter\": \"\",\"OrderBy\": \"\",\"SelectPage\": \"2\"}}";
+		String resultStr = HttpRequest.post(Constants.K3API + Constants.EMPLOYEE + Constants.GET_LIST + SignUtil.getToken())
+				.body(paramJson)
+				.timeout(2000)
+				.execute().body();
+
+		if (StringUtils.isNotEmpty(resultStr)) {
+			JSONObject resultObject = (JSONObject) JSON.parse(resultStr);
+			if (resultObject.getInteger("StatusCode") == 200) {
+				JSONObject data = resultObject.getJSONObject("Data");
+				if (data != null) {
+					JSONArray dataList = data.getJSONArray("Data");
+					if (dataList != null && !dataList.isEmpty()) {
+						return dataList.toJavaList(Employee.class);
+					}
+				}
+			}
+		}
+		return Collections.emptyList();
 	}
 }

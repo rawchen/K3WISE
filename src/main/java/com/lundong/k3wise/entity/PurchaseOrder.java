@@ -64,13 +64,6 @@ public class PurchaseOrder {
 	@JSONField(name = "FExchangeRate")
 	private Double exchangeRate;
 
-
-	/**
-	 * 项目名称
-	 */
-	@JSONField(name = "FItemName")
-	private String itemName;
-
 	/**
 	 * 部门
 	 */

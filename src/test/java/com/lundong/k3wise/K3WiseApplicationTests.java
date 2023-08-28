@@ -108,4 +108,13 @@ class K3WiseApplicationTests {
 			System.out.println(r);
 		}
 	}
+
+	@Test
+	void t13() {
+		NumberAndNameType t = new NumberAndNameType();
+		t.setName("殷士海");
+		t.setNumber("003");
+		String r = SignUtil.getUserIdByEmployee(t);
+		System.out.println(r);
+	}
 }
