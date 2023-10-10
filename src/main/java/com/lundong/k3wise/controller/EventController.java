@@ -65,26 +65,32 @@ public class EventController {
 						}
 						String formCode = "";
 						String formCodeName = "";
+						String dataTableName = "";
 						switch (approvalCode) {
 							case Constants.PURCHASE_REQUISITION_APPROVAL_CODE:
 								formCode = Constants.PURCHASE_REQUISITION;
 								formCodeName = "单据编号";
+								dataTableName = DataTypeEnum.PURCHASE_REQUISITION.getType();
 								break;
 							case Constants.PURCHASE_ORDER_APPROVAL_CODE:
 								formCode = Constants.PURCHASE_ORDER;
 								formCodeName = "编号";
+								dataTableName = DataTypeEnum.PURCHASE_ORDER.getType();
 								break;
 							case Constants.PAYMENT_REQUEST_APPROVAL_CODE:
 								formCode = Constants.PAYMENT_REQUEST;
 								formCodeName = "单据号";
+								dataTableName = DataTypeEnum.PAYMENT_REQUEST.getType();
 								break;
 							case Constants.PURCHASE_CONTRACT_APPROVAL_CODE:
 								formCode = Constants.PURCHASE_CONTRACT;
 								formCodeName = "合同号";
+								dataTableName = DataTypeEnum.PURCHASE_CONTRACT.getType();
 								break;
 							case Constants.OUTSOURCING_ORDER_APPROVAL_CODE:
 								formCode = Constants.OUTSOURCING_ORDER;
 								formCodeName = "单据编号";
+								dataTableName = DataTypeEnum.OUTSOURCING_ORDER.getType();
 								break;
 						}
 
@@ -109,14 +115,18 @@ public class EventController {
 								SignUtil.checkBill(formCode, formNumber, CheckBillStatusEnum.AUDIT.getCode());
 							} else if (ApprovalInstanceEnum.CANCELED.getType().equals(status)) {
 								// 审批已撤回
-								// 取消已同步单据标识
-								DataUtil.removeByFileName(formNumber, DataTypeEnum.PURCHASE_REQUISITION.getType());
-								// 退回单据状态为保存状态（驳回）
-								SignUtil.checkBill(formCode, formNumber, CheckBillStatusEnum.REJECT.getCode());
-
+								// if在同步列表里面出现过，取消已同步单据标识
+								List<String> list = DataUtil.getIdsByFileNameFilterInstanceId(dataTableName);
+								for (String s : list) {
+									String temp = formNumber + "_" + instanceCode;
+									if (s.equals(temp)) {
+										DataUtil.removeByFileName(temp, dataTableName);
+										// 退回单据状态为保存状态（驳回）
+										SignUtil.checkBill(formCode, formNumber, CheckBillStatusEnum.REJECT.getCode());
+										break;
+									}
+								}
 							}
-
-
 						}
 					}).start();
 				}

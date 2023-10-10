@@ -44,7 +44,7 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 		log.info("状态为4（启动状态）的采购申请单数量：{}", purchaseRequisitionList.size());
 
 		// 过滤掉存储中的ids
-		List<String> purchaseOrderLists = DataUtil.getIdsByFileName(DataTypeEnum.PURCHASE_REQUISITION.getType());
+		List<String> purchaseOrderLists = DataUtil.getIdsByFileNameFilterInstanceId(DataTypeEnum.PURCHASE_REQUISITION.getType());
 		purchaseRequisitionList = purchaseRequisitionList.stream()
 				.filter(p -> !purchaseOrderLists.contains(p.getBillNo())).collect(Collectors.toList());
 
@@ -60,7 +60,7 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_REQUISITION_APPROVAL_CODE, userId);
 			if (instanceCode != null) {
-				billNumbers.add(String.valueOf(pr.getBillNo()));
+				billNumbers.add(pr.getBillNo() + "_" + instanceCode);
 			}
 		}
 		// 本地文本记录已同步的id

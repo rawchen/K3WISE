@@ -12,7 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.lundong.k3wise.util.SignUtil.getUserIdByName;
 
@@ -116,5 +118,21 @@ class K3WiseApplicationTests {
 		t.setNumber("003");
 		String r = SignUtil.getUserIdByEmployee(t);
 		System.out.println(r);
+	}
+
+	@Test
+	void t14() {
+		List<PurchaseRequisition> purchaseRequisitionList = new ArrayList<>();
+		PurchaseRequisition t = new PurchaseRequisition();
+		t.setBillNo("POREQ000044");
+		PurchaseRequisition t1 = new PurchaseRequisition();
+		t1.setBillNo("POREQ000042");
+		purchaseRequisitionList.add(t);
+		purchaseRequisitionList.add(t1);
+		List<String> purchaseOrderLists = DataUtil.getIdsByFileNameFilterInstanceId(DataTypeEnum.PURCHASE_REQUISITION.getType());
+		purchaseRequisitionList = purchaseRequisitionList.stream().filter(p -> !purchaseOrderLists.contains(p.getBillNo())).collect(Collectors.toList());
+		for (PurchaseRequisition purchaseRequisition : purchaseRequisitionList) {
+			System.out.println(purchaseRequisition);
+		}
 	}
 }

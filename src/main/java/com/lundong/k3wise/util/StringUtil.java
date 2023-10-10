@@ -20,12 +20,12 @@ public class StringUtil {
 		if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
 			// 采购申请单
 			PurchaseRequisition temp = (PurchaseRequisition) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"申请人\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"使用部门\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"申请人\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"使用部门\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			for (PurchaseRequisitionDetail detail : temp.getDetail()) {
-				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":采购数量},{\"id\":\"d8\",\"type\":\"number\",\"value\":库存数量},{\"id\":\"d9\",\"type\":\"number\",\"value\":辅助数量},{\"id\":\"d10\",\"type\":\"input\",\"value\":\"建议采购日期\"},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"到货日期\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"客户BOM\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"提前期\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"用途\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"计划模式\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"计划跟踪号\"}]";
+				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":采购数量},{\"id\":\"d8\",\"type\":\"number\",\"value\":库存数量},{\"id\":\"d10\",\"type\":\"input\",\"value\":\"建议采购日期\"},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"到货日期\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"BOM编号\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"提前期\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"用途\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"源单单号\"}]";
 				detailJson = detailJson
 						.replace("物料代码", nullIsEmpty(detail.getItemId().getNumber()))
 						.replace("物料名称", nullIsEmpty(detail.getItemId().getName()))
@@ -34,15 +34,12 @@ public class StringUtil {
 						.replace("单位", nullIsEmpty(detail.getUnitId().getName()))
 						.replace("采购数量", nullIsZero(detail.getFauxqty()))
 						.replace("库存数量", "0")
-						.replace("辅助数量", nullIsZero(detail.getSecQty()))
 						.replace("建议采购日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(detail.getAPurchTime()))
 						.replace("到货日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(detail.getFetchTime()))
-						.replace("客户BOM", nullIsEmpty(detail.getBomInterId().getName()))
+						.replace("BOM编号", nullIsEmpty(detail.getBomInterId().getName()))
 						.replace("提前期", nullIsEmpty(detail.getLeadTime()))
 						.replace("用途", nullIsEmpty(detail.getUse()))
-						.replace("源单单号", nullIsEmpty(detail.getSourceBillNo()))
-						.replace("计划模式", nullIsEmpty(detail.getPlanMode().getName()))
-						.replace("计划跟踪号", nullIsEmpty(detail.getMtono()));
+						.replace("源单单号", nullIsEmpty(detail.getSourceBillNo()));
 				detailJson += ",";
 				detailResultJson.append(detailJson);
 			}
@@ -52,7 +49,6 @@ public class StringUtil {
 			json = json
 					.replace("申请人", nullIsEmpty(temp.getRequesterId().getName()))
 					.replace("使用部门", nullIsEmpty(temp.getDeptId().getName()))
-					.replace("项目名称", nullIsEmpty(temp.getItemName()))
 					.replace("日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(temp.getDate()))
 					.replace("备注", nullIsEmpty(temp.getNote()))
 					.replace("单据编号", nullIsEmpty(temp.getBillNo()))
@@ -120,7 +116,7 @@ public class StringUtil {
 						.replace("规格型号", nullIsEmpty(detail.getBaseProperty1()))
 						.replace("计量单位", nullIsEmpty(detail.getBase2().getName()))
 						.replace("总数量", nullIsEmpty(detail.getQuantity()))
-						.replace("含税单价", nullIsEmpty(detail.getAuxTaxPrice()))
+						.replace("含税单价", nullIsZero(detail.getAuxTaxPrice()))
 						.replace("选单单据金额", nullIsZero(detail.getAmountForSrc()))
 						.replace("费用项目代码", nullIsEmpty(detail.getFeeObjId().getNumber()))
 						.replace("费用项目名称", nullIsEmpty(detail.getFeeObjId().getName()));

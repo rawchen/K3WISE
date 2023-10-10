@@ -33,12 +33,6 @@ public class PurchaseRequisition {
 	private String billNo;
 
 	/**
-	 * 项目名称
-	 */
-	@JSONField(name = "FItemName")
-	private String itemName;
-
-	/**
 	 * 日期
 	 */
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

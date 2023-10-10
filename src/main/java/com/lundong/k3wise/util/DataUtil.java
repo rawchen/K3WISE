@@ -81,6 +81,31 @@ public class DataUtil {
 	}
 
 	/**
+	 * 文件中所有文本行，去掉下划线后的字符
+	 *
+	 * @param fileName
+	 * @return
+	 */
+	public static List<String> getIdsByFileNameFilterInstanceId(String fileName) {
+		List<String> list = new ArrayList<>();
+		try {
+			File file = DataUtil.getFileByFileName(fileName);
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line;
+			while ((line = br.readLine()) != null) {
+				int index = line.indexOf('_');
+				if (index != -1) {
+					line = line.substring(0, index);
+				}
+				list.add(line);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return list;
+	}
+
+	/**
 	 * 文件中根据文本行内容匹配删除行
 	 *
 	 * @param formId

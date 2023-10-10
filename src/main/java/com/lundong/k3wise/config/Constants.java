@@ -21,13 +21,13 @@ public class Constants {
 	// 飞书自建应用订阅事件 Verification Token
 	public final static String VERIFICATION_TOKEN = "Fj0GmhaD2q6oQ8L0Dl4xOgQhxxxxxxx";
 
-	// 采购申请审批CODE
+	// 采购申请单审批CODE
 	public final static String PURCHASE_REQUISITION_APPROVAL_CODE = "CD87DF39-2C97-4EBA-9925-38BB796C712A";
 
 	// 采购订单审批CODE
 	public final static String PURCHASE_ORDER_APPROVAL_CODE = "305B79EE-913A-4EF4-AB9F-7D5C757842B1";
 
-	// 付款申请审批CODE
+	// 付款申请单审批CODE
 	public final static String PAYMENT_REQUEST_APPROVAL_CODE = "A7087D6D-28BA-4382-A021-1765B250035C";
 
 	// 采购合同审批CODE
@@ -66,16 +66,15 @@ public class Constants {
 	// 采购订单
 	public final static String PURCHASE_ORDER = "/PO";
 
-	// 付款申请
+	// 付款申请单
 	public final static String PAYMENT_REQUEST = "/Bill1000040";
 
-	// 采购合同/合同(应收)
-	public final static String PURCHASE_CONTRACT = "/Bill1000019";
+	// 采购合同/合同(应付)
+	public final static String PURCHASE_CONTRACT = "/Bill1000020";
 
 	// 委外订单
 	public final static String OUTSOURCING_ORDER = "/Subcontract_Order";
 
-
-
-
+	// 职员
+	public static final String EMPLOYEE = "/Employee";
 }
