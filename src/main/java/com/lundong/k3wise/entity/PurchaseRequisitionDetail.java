@@ -89,11 +89,11 @@ public class PurchaseRequisitionDetail {
 	@JSONField(name = "FFetchTime")
 	private LocalDateTime fetchTime;
 
-	/**
-	 * 客户BOM
-	 */
-	@JSONField(name = "FBomInterID")
-	private NumberAndNameType bomInterId;
+//	/**
+//	 * 客户BOM
+//	 */
+//	@JSONField(name = "FBomInterID")
+//	private NumberAndNameType bomInterId;
 
 	/**
 	 * 提前期
@@ -125,4 +125,57 @@ public class PurchaseRequisitionDetail {
 	@JSONField(name = "FMTONo")
 	private String mtono;
 
+	/**
+	 * 请购人
+	 */
+	@JSONField(name = "FEntrySelfP0143")
+	private NumberAndNameType entrySelfP0143;
+
+	/**
+	 * 申请理由
+	 */
+	@JSONField(name = "FEntrySelfP0140")
+	private String entrySelfP0140;
+
+	/**
+	 * 项目名称
+	 */
+	@JSONField(name = "FEntrySelfP0135")
+	private NumberAndNameType entrySelfP0135;
+
+	/**
+	 * 需求部门
+	 */
+	@JSONField(name = "FEntrySelfP0136")
+	private NumberAndNameType entrySelfP0136;
+
+	/**
+	 * 物料类别
+	 */
+	@JSONField(name = "FEntrySelfP0137")
+	private NumberAndNameType entrySelfP0137;
+
+	/**
+	 * 是否预算内
+	 */
+	@JSONField(name = "FEntrySelfP0142")
+	private NumberAndNameType entrySelfP0142;
+
+	/**
+	 * 预算一类
+	 */
+	@JSONField(name = "FEntrySelfP0138")
+	private NumberAndNameType entrySelfP0138;
+
+	/**
+	 * 预算二类
+	 */
+	@JSONField(name = "FEntrySelfP0139")
+	private NumberAndNameType entrySelfP0139;
+
+	/**
+	 * 在建工程编号
+	 */
+	@JSONField(name = "FEntrySelfP0145")
+	private NumberAndNameType entrySelfP0145;
 }

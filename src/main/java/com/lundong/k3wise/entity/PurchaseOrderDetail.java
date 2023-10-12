@@ -105,4 +105,64 @@ public class PurchaseOrderDetail {
 	@JSONField(name = "FSourceBillNo")
 	private String sourceBillNo;
 
+	/**
+	 * 请购人
+	 */
+	@JSONField(name = "FEntrySelfP0278")
+	private NumberAndNameType entrySelfP0278;
+
+	/**
+	 * 申请理由
+	 */
+	@JSONField(name = "FEntrySelfP0277")
+	private String entrySelfP0277;
+
+	/**
+	 * 项目名称
+	 */
+	@JSONField(name = "FEntrySelfP0272")
+	private NumberAndNameType entrySelfP0272;
+
+	/**
+	 * 需求部门
+	 */
+	@JSONField(name = "FEntrySelfP0271")
+	private NumberAndNameType entrySelfP0271;
+
+	/**
+	 * 物料类别
+	 */
+	@JSONField(name = "FEntrySelfP0274")
+	private NumberAndNameType entrySelfP0274;
+
+	/**
+	 * 是否预算内
+	 */
+	@JSONField(name = "FEntrySelfP0280")
+	private NumberAndNameType entrySelfP0280;
+
+	/**
+	 * 预算一类
+	 */
+	@JSONField(name = "FEntrySelfP0275")
+	private NumberAndNameType entrySelfP0275;
+
+	/**
+	 * 预算二类
+	 */
+	@JSONField(name = "FEntrySelfP0276")
+	private NumberAndNameType entrySelfP0276;
+
+	/**
+	 * 采购申请备注
+	 */
+	@JSONField(name = "FEntrySelfP0279")
+	private String entrySelfP0279;
+
+	/**
+	 * 在建工程编号
+	 */
+	@JSONField(name = "FEntrySelfP0283")
+	private NumberAndNameType entrySelfP0283;
+
 }

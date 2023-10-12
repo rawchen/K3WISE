@@ -100,4 +100,10 @@ public class PaymentRequest {
 	 */
 	@JSONField(name = "detail")
 	private List<PaymentRequestDetail> detail;
+
+	/**
+	 * 备注
+	 */
+	@JSONField(name = "FText")
+	private String text;
 }

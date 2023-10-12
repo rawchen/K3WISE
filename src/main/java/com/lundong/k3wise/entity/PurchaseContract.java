@@ -27,6 +27,12 @@ public class PurchaseContract {
 	private NumberAndNameType employee;
 
 	/**
+	 * 摘要
+	 */
+	@JSONField(name = "FExplanation")
+	private String explanation;
+
+	/**
 	 * 合同种类
 	 */
 	@JSONField(name = "FContractTypeID")

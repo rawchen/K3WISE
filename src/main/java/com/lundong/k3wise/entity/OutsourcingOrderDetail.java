@@ -102,4 +102,76 @@ public class OutsourcingOrderDetail {
 	@JSONField(name = "FNOTE")
 	private String note;
 
+	/**
+	 * 需求部门
+	 */
+	@JSONField(name = "FBase1")
+	private NumberAndNameType base1;
+
+	/**
+	 * 项目名称
+	 */
+	@JSONField(name = "FBase2")
+	private NumberAndNameType base2;
+
+	/**
+	 * 物料归属
+	 */
+	@JSONField(name = "FBase3")
+	private NumberAndNameType base3;
+
+	/**
+	 * 预算一类
+	 */
+	@JSONField(name = "FBase4")
+	private NumberAndNameType base4;
+
+	/**
+	 * 预算二类
+	 */
+	@JSONField(name = "FBase5")
+	private NumberAndNameType base5;
+
+	/**
+	 * 是否预算内
+	 */
+	@JSONField(name = "FBase6")
+	private NumberAndNameType base6;
+
+	/**
+	 * 请购人
+	 */
+	@JSONField(name = "FBase7")
+	private NumberAndNameType base7;
+
+	/**
+	 * 物料类别
+	 */
+	@JSONField(name = "FBase8")
+	private NumberAndNameType base8;
+
+	/**
+	 * 在建工程编号
+	 */
+	@JSONField(name = "FBase9")
+	private NumberAndNameType base9;
+
+	/**
+	 * 申请理由
+	 */
+	@JSONField(name = "FText")
+	private String text;
+
+	/**
+	 * 请购用途
+	 */
+	@JSONField(name = "FText2")
+	private String text2;
+
+	/**
+	 * 采购申请备注
+	 */
+	@JSONField(name = "FText3")
+	private String text3;
+
 }

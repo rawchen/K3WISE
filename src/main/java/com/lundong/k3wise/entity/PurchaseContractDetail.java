@@ -96,4 +96,70 @@ public class PurchaseContractDetail {
 	@JSONField(name = "FExplanation_3")
 	private String explanation;
 
+	/**
+	 * 需求部门
+	 */
+	@JSONField(name = "FBase")
+	private NumberAndNameType base;
+
+	/**
+	 * 项目名称
+	 */
+	@JSONField(name = "FBase1")
+	private NumberAndNameType base1;
+
+	/**
+	 * 请购人
+	 */
+	@JSONField(name = "FBase2")
+	private NumberAndNameType base2;
+
+	/**
+	 * 物料类别
+	 */
+	@JSONField(name = "FBase3")
+	private NumberAndNameType base3;
+
+	/**
+	 * 预算一类
+	 */
+	@JSONField(name = "FBase4")
+	private NumberAndNameType base4;
+
+	/**
+	 * 预算二类
+	 */
+	@JSONField(name = "FBase5")
+	private NumberAndNameType base5;
+
+	/**
+	 * 是否预算内
+	 */
+	@JSONField(name = "FBase6")
+	private NumberAndNameType base6;
+
+	/**
+	 * 在建工程编号
+	 */
+	@JSONField(name = "FBase7")
+	private NumberAndNameType base7;
+
+	/**
+	 * 申请理由
+	 */
+	@JSONField(name = "FText1")
+	private String text1;
+
+	/**
+	 * 请购用途
+	 */
+	@JSONField(name = "FText2")
+	private String text2;
+
+	/**
+	 * 采购申请备注
+	 */
+	@JSONField(name = "FText3")
+	private String text3;
+
 }

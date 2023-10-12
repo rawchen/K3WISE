@@ -41,6 +41,9 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 	@Override
 	public void syncPurchaseRequisition() {
 		List<PurchaseRequisition> purchaseRequisitionList = purchaseRequisitionList();
+		for (PurchaseRequisition purchaseRequisition : purchaseRequisitionList) {
+			System.out.println(purchaseRequisition);
+		}
 		log.info("状态为4（启动状态）的采购申请单数量：{}", purchaseRequisitionList.size());
 
 		// 过滤掉存储中的ids
