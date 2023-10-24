@@ -22,25 +22,28 @@ public class Constants {
 	public final static String VERIFICATION_TOKEN = "Fj0GmhaD2q6oQ8L0Dl4xOgQhxxxxxxx";
 
 	// 采购申请单审批CODE
-	public final static String PURCHASE_REQUISITION_APPROVAL_CODE = "CD87DF39-2C97-4EBA-9925-38BB796C712A";
+	public final static String PURCHASE_REQUISITION_APPROVAL_CODE = "CD87DF39-2C97-4EBA-9925-xxxxxxxxxxx";
 
 	// 采购订单审批CODE
-	public final static String PURCHASE_ORDER_APPROVAL_CODE = "305B79EE-913A-4EF4-AB9F-7D5C757842B1";
+	public final static String PURCHASE_ORDER_APPROVAL_CODE = "305B79EE-913A-4EF4-AB9F-xxxxxxxxxxx";
 
 	// 付款申请单审批CODE
-	public final static String PAYMENT_REQUEST_APPROVAL_CODE = "A7087D6D-28BA-4382-A021-1765B250035C";
+	public final static String PAYMENT_REQUEST_APPROVAL_CODE = "A7087D6D-28BA-4382-A021-xxxxxxxxxxx";
 
 	// 采购合同审批CODE
-	public final static String PURCHASE_CONTRACT_APPROVAL_CODE = "F82243A6-9093-459F-9515-36F73A904999";
+	public final static String PURCHASE_CONTRACT_APPROVAL_CODE = "F82243A6-9093-459F-9515-xxxxxxxxxxx";
 
 	// 委外订单审批CODE
-	public final static String OUTSOURCING_ORDER_APPROVAL_CODE = "97764BD0-25C6-4535-9AC6-A7C627994D2C";
+	public final static String OUTSOURCING_ORDER_APPROVAL_CODE = "97764BD0-25C6-4535-9AC6-xxxxxxxxxxx";
 
 	// 金蝶K3WISE授权码
-	public final static String AUTHORITY_CODE = "cc7c2a733c0a29ecd55ad722a8fb42a18878ebb15f9710e3";
+	public final static String AUTHORITY_CODE = "cc7c2a733c0a29ecd55ad722a8fb42a18878exxxxxxxxxxx";
 
 	// 金蝶K3WISE网址
-	public final static String K3API = "http://192.168.110.223/K3API";
+	public final static String K3API = "http://192.168.xxx.xxx/K3API";
+
+	// 审核人
+	public final static String APPROVAL_NAME = "覃恒先";
 
 	// 增 Save
 	public final static String SAVE = "/Save" + "?token=";
