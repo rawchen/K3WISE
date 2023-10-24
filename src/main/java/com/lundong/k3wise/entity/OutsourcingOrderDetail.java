@@ -79,6 +79,14 @@ public class OutsourcingOrderDetail {
 	private LocalDateTime fetchDate;
 
 	/**
+	 * 建议发料日期
+	 */
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JSONField(name = "FPayShipDate")
+	private LocalDateTime payShipDate;
+
+	/**
 	 * 税率
 	 */
 	@JSONField(name = "FTaxRate")

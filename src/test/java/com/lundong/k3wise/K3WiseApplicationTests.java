@@ -114,8 +114,8 @@ class K3WiseApplicationTests {
 	@Test
 	void t13() {
 		NumberAndNameType t = new NumberAndNameType();
-		t.setName("殷士海");
-		t.setNumber("003");
+		t.setName("覃xx");
+		t.setNumber("E00000xx");
 		String r = SignUtil.getUserIdByEmployee(t);
 		System.out.println(r);
 	}
@@ -134,5 +134,16 @@ class K3WiseApplicationTests {
 		for (PurchaseRequisition purchaseRequisition : purchaseRequisitionList) {
 			System.out.println(purchaseRequisition);
 		}
+	}
+
+	@Test
+	void t15() {
+		SignUtil.checkBill("/Purchase_Requisition", "POREQ000954", "4");
+	}
+
+	@Test
+	void t16() {
+		String userIdByPhone = SignUtil.getUserIdByMobile("123");
+		System.out.println(userIdByPhone);
 	}
 }

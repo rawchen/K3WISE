@@ -89,17 +89,16 @@ public class SignUtil {
 	 * @param status     审核动作
 	 */
 	public static void checkBill(String formCode, String formNumber, String status) {
-		String paramDetailJson = "{\"Data\": {\"FBillNo\": \"" + formNumber + "\",\"FChecker\": \"administrator\",\"FCheckDirection\": \"" + status + "\",\"FDealComment\": \"\"}}";
+		String paramDetailJson = "{\"Data\": {\"FBillNo\": \"" + formNumber + "\",\"FChecker\": \"" + Constants.APPROVAL_NAME + "\",\"FCheckDirection\": \"" + status + "\",\"FDealComment\": \"\"}}";
 		String resultDetailStr = HttpRequest.post(Constants.K3API + File.separator + formCode + Constants.CHECK_BILL + getToken())
 				.body(paramDetailJson)
-				.timeout(2000)
 				.execute().body();
 		if (StringUtils.isNotEmpty(resultDetailStr)) {
 			JSONObject resultDetailObject = (JSONObject) JSON.parse(resultDetailStr);
 			if (resultDetailObject.getInteger("StatusCode") == 200) {
 				log.info("FBillNo: {},formCode: {},status: {} 启动审核/审核/驳回动作成功", formNumber, formCode, status);
 			} else {
-				log.info("FBillNo: {},formCode: {},status: {} 启动审核/审核/驳回动作失败：{}", formNumber, formCode, status, resultDetailObject.getString("Message"));
+				log.error("FBillNo: {},formCode: {},status: {} 启动审核/审核/驳回动作失败：{}", formNumber, formCode, status, resultDetailStr);
 			}
 		}
 	}
@@ -251,68 +250,40 @@ public class SignUtil {
 	/**
 	 * 通过手机号获取userId
 	 *
-	 * @param phone
+	 * @param mobile
 	 * @return
 	 */
-	public static String getUserIdByPhone(String accessToken, String phone) {
-		List<FeishuUser> users = new ArrayList<>();
-		String pageToken = "";
-		while (true) {
-			String resultStr = HttpRequest.get("https://open.feishu.cn/open-apis/ehr/v1/employees" +
-							"?page_size=100&status=2&status=4&user_id_type=user_id&view=basic" +
-							(!StringUtil.isEmpty(pageToken) ? "&page_token=" : "") + pageToken)
-					.header("Authorization", "Bearer " + accessToken)
-					.execute()
-					.body();
-			JSONObject jsonObject = JSON.parseObject(resultStr);
-			if (!"0".equals(jsonObject.getString("code"))) {
-				return "";
-			}
-			JSONObject data = (JSONObject) jsonObject.get("data");
-			JSONArray items = (JSONArray) data.get("items");
-			for (int i = 0; i < items.size(); i++) {
-				// 构造飞书用户对象
-				FeishuUser feishuUser = items.getJSONObject(i)
-						.getJSONObject("system_fields")
-						.toJavaObject(FeishuUser.class);
-				feishuUser.setUserId(items.getJSONObject(i).getString("user_id"));
-				if (items.getJSONObject(i).getJSONObject("system_fields")
-						.getJSONObject("job") != null) {
-					feishuUser.setJobTitle(items.getJSONObject(i)
-							.getJSONObject("system_fields")
-							.getJSONObject("job")
-							.getString("name"));
-				}
-				users.add(feishuUser);
-			}
-			if ((boolean) data.get("has_more")) {
-				pageToken = data.getString("page_token");
-			} else {
-				break;
-			}
-		}
-
-		for (FeishuUser user : users) {
-			String mobile = user.getMobile();
-			if (mobile != null && mobile.contains("(+86) ")) {
-				mobile = mobile.substring(6);
-			}
-			if (phone.equals(mobile)) {
-				return user.getUserId();
-			}
-		}
-		return "";
+	public static String getUserIdByMobile(String mobile) {
+		String accessToken = getAccessToken(Constants.APP_ID_FEISHU, Constants.APP_SECRET_FEISHU);
+		return getUserIdByMobile(accessToken, mobile);
 	}
 
 	/**
 	 * 通过手机号获取userId
 	 *
-	 * @param phone
+	 * @param mobile
 	 * @return
 	 */
-	public static String getUserIdByPhone(String phone) {
-		String accessToken = getAccessToken(Constants.APP_ID_FEISHU, Constants.APP_SECRET_FEISHU);
-		return getUserIdByPhone(accessToken, phone);
+	public static String getUserIdByMobile(String accessToken, String mobile) {
+		String resultStr = HttpRequest.post("https://open.feishu.cn/open-apis/contact/v3/users/batch_get_id?user_id_type=user_id")
+				.header("Authorization", "Bearer " + accessToken)
+				.body("{\"mobiles\": [\"" + mobile + "\"]}")
+				.execute()
+				.body();
+		JSONObject jsonObject = JSON.parseObject(resultStr);
+		if (jsonObject.getInteger("code") != 0) {
+			log.error("通过手机号获取userId错误: {}", resultStr);
+			return "";
+		}
+		JSONObject data = (JSONObject) jsonObject.get("data");
+		JSONArray items = (JSONArray) data.get("user_list");
+		for (int i = 0; i < items.size(); i++) {
+			String userId = items.getJSONObject(i).getString("user_id");
+			if (userId != null) {
+				return userId;
+			}
+		}
+		return "";
 	}
 
 	/**
@@ -327,11 +298,13 @@ public class SignUtil {
 		for (Employee employee : employeeList) {
 			if (employee.getNumber() != null && requester.getNumber().equals(employee.getNumber())) {
 				employeePhone = employee.getPhone();
+				System.out.println("phone: " + employeePhone);
+				break;
 			}
 		}
 		// 如果手机号不是空的就用手机号匹配
 		if (!StringUtil.isEmpty(employeePhone)) {
-			String result = getUserIdByPhone(employeePhone);
+			String result = getUserIdByMobile(employeePhone);
 			if (StringUtil.isEmpty(result)) {
 				return getUserIdByName(requester.getName());
 			}

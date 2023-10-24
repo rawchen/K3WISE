@@ -234,7 +234,7 @@ public class StringUtil {
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			for (OutsourcingOrderDetail detail : temp.getDetail()) {
-				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":总数量},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d10\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"BOM编号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d24\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d25\",\"type\":\"input\",\"value\":\"在建工程编号\"}]";
+				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":总数量},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d10\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"BOM编号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d24\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d25\",\"type\":\"input\",\"value\":\"在建工程编号\"},{\"id\":\"d26\",\"type\":\"input\",\"value\":\"建议发料日期\"}]";
 				detailJson = detailJson
 						.replace("物料代码", nullIsEmpty(detail.getItemId().getNumber()))
 						.replace("物料名称", nullIsEmpty(detail.getItemName()))
@@ -246,6 +246,7 @@ public class StringUtil {
 						.replace("含税单价", nullIsEmpty(detail.getAuxTaxPrice()))
 						.replace("价税合计", nullIsZero(detail.getAllAmount()))
 						.replace("交货日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(detail.getFetchDate()))
+						.replace("建议发料日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(detail.getPayShipDate()))
 						.replace("税率", nullIsEmpty(detail.getTaxRate()))
 						.replace("BOM编号", nullIsEmpty(detail.getBomInterId().getNumber()))
 						.replace("源单单号", nullIsEmpty(detail.getBillNoSrc()))
@@ -292,6 +293,23 @@ public class StringUtil {
 	 */
 	private static String contractTypeCovert(Integer contractTypeId) {
 		switch (contractTypeId) {
+			case 1:
+				return "销售合同";
+			case 2:
+				return "采购合同";
+			default:
+				return "";
+		}
+	}
+
+	/**
+	 * 转换 付款申请单—付款类型
+	 *
+	 * @param paymentTypeId
+	 * @return
+	 */
+	private static String paymentTypeCovert(Integer paymentTypeId) {
+		switch (paymentTypeId) {
 			case 1:
 				return "销售合同";
 			case 2:
