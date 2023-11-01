@@ -298,7 +298,6 @@ public class SignUtil {
 		for (Employee employee : employeeList) {
 			if (employee.getNumber() != null && requester.getNumber().equals(employee.getNumber())) {
 				employeePhone = employee.getPhone();
-				System.out.println("phone: " + employeePhone);
 				break;
 			}
 		}
@@ -307,12 +306,13 @@ public class SignUtil {
 			String result = getUserIdByMobile(employeePhone);
 			if (StringUtil.isEmpty(result)) {
 				return getUserIdByName(requester.getName());
+			} else {
+				return result;
 			}
 		} else {
 			// 如果手机号是空的就用名字匹配
 			return getUserIdByName(requester.getName());
 		}
-		return "";
 	}
 
 	/**

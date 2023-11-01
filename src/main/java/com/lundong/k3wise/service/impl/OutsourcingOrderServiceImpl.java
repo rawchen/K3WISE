@@ -60,7 +60,7 @@ public class OutsourcingOrderServiceImpl implements OutsourcingOrderService {
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.OUTSOURCING_ORDER_APPROVAL_CODE, userId);
 			if (instanceCode != null) {
-				billNumbers.add(String.valueOf(pr.getBillNo()));
+				billNumbers.add(pr.getBillNo() + "_" + instanceCode);
 			}
 		}
 		// 本地文本记录已同步的id

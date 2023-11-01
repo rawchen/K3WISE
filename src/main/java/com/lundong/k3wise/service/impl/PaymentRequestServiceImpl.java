@@ -60,7 +60,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(po, Constants.PAYMENT_REQUEST_APPROVAL_CODE, userId);
 			if (instanceCode != null) {
-				billNumbers.add(String.valueOf(po.getNumber()));
+				billNumbers.add(po.getNumber() + "_" + instanceCode);
 			}
 		}
 		// 本地文本记录已同步的id

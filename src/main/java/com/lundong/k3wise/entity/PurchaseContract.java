@@ -67,8 +67,8 @@ public class PurchaseContract {
 	/**
 	 * 付款条件
 	 */
-	@JSONField(name = "FPayCondition")
-	private NumberAndNameType payCondition;
+//	@JSONField(name = "FPayCondition")
+//	private NumberAndNameType payCondition;
 
 	/**
 	 * 核算项目

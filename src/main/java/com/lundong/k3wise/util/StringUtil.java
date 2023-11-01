@@ -161,7 +161,7 @@ public class StringUtil {
 			json = json
 					.replace("单据日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(temp.getDate()))
 					.replace("单据号", nullIsEmpty(temp.getNumber()))
-					.replace("付款类型", nullIsEmpty(temp.getPayType()))
+					.replace("付款类型", nullIsEmpty(paymentTypeCovert(temp.getPayType())))
 					.replace("核算项目类别", nullIsEmpty(temp.getItemClassId().getName()))
 					.replace("核算项目名称", nullIsEmpty(temp.getCustomer().getName()))
 					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
@@ -176,7 +176,7 @@ public class StringUtil {
 		} else if (PurchaseContract.class.isAssignableFrom(p.getClass())) {
 			// 采购合同/合同(应付)
 			PurchaseContract temp = (PurchaseContract) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"合同种类\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"合同日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"合同名称\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"合同号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"付款条件\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"核算项目\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"总金额\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"附注\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"合同种类\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"合同日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"合同名称\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"合同号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"核算项目\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"总金额\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"附注\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			for (PurchaseContractDetail detail : temp.getDetail()) {
@@ -219,7 +219,7 @@ public class StringUtil {
 					.replace("合同名称", nullIsEmpty(temp.getContractName()))
 					.replace("合同号", nullIsEmpty(temp.getContractNo()))
 					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
-					.replace("付款条件", nullIsEmpty(temp.getPayCondition().getName()))
+//					.replace("付款条件", nullIsEmpty(temp.getPayCondition().getName()))
 					.replace("核算项目", nullIsEmpty(temp.getCustomer().getName()))
 					.replace("总金额", nullIsEmpty(temp.getTotalAmountFor()))
 					.replace("附注", nullIsEmpty(temp.getText()))
@@ -311,9 +311,11 @@ public class StringUtil {
 	private static String paymentTypeCovert(Integer paymentTypeId) {
 		switch (paymentTypeId) {
 			case 1:
-				return "销售合同";
+				return "购货款";
 			case 2:
-				return "采购合同";
+				return "预付款";
+			case 6:
+				return "其他付款";
 			default:
 				return "";
 		}
@@ -327,10 +329,10 @@ public class StringUtil {
 	 */
 	public static String nullIsEmpty(String str) {
 		if (str == null) {
-			return "无";
+			return " ";
 		} else {
 			if (str.isEmpty()) {
-				return "无";
+				return " ";
 			} else {
 				if (str.endsWith("\r\n")) {
 					str = str.substring(0, str.length() - 2);

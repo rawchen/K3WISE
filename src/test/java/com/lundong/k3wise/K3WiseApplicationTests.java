@@ -138,7 +138,7 @@ class K3WiseApplicationTests {
 
 	@Test
 	void t15() {
-		SignUtil.checkBill("/Purchase_Requisition", "POREQ000954", "4");
+		SignUtil.checkBill("/PO", "PO20231024003", "2");
 	}
 
 	@Test

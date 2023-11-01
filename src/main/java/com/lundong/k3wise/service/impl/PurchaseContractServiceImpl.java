@@ -60,7 +60,7 @@ public class PurchaseContractServiceImpl implements PurchaseContractService {
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_CONTRACT_APPROVAL_CODE, userId);
 			if (instanceCode != null) {
-				billNumbers.add(String.valueOf(pr.getContractNo()));
+				billNumbers.add(pr.getContractNo() + "_" + instanceCode);
 			}
 		}
 		// 本地文本记录已同步的id

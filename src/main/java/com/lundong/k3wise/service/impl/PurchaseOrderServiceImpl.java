@@ -57,10 +57,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 //			String userId = SignUtil.getUserIdByName(requester.getName());
 			// 通过编号获取手机号，再根据手机号获取userId，如果手机号匹配为空就姓名匹配
 			String userId = SignUtil.getUserIdByEmployee(requester);
+			System.out.println("userId: " + userId);
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(po, Constants.PURCHASE_ORDER_APPROVAL_CODE, userId);
 			if (instanceCode != null) {
-				billNumbers.add(String.valueOf(po.getBillNo()));
+				billNumbers.add(po.getBillNo() + "_" + instanceCode);
 			}
 		}
 		// 本地文本记录已同步的id
