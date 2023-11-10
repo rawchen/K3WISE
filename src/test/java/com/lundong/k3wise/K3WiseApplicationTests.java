@@ -8,12 +8,14 @@ import com.lundong.k3wise.service.PurchaseOrderService;
 import com.lundong.k3wise.service.PurchaseRequisitionService;
 import com.lundong.k3wise.util.DataUtil;
 import com.lundong.k3wise.util.SignUtil;
+import com.lundong.k3wise.util.StringUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.lundong.k3wise.util.SignUtil.getUserIdByName;
@@ -138,12 +140,48 @@ class K3WiseApplicationTests {
 
 	@Test
 	void t15() {
-		SignUtil.checkBill("/PO", "PO20231024003", "2");
+//		SignUtil.checkBill("/PO", "PO20231024003", "2");
+//		SignUtil.checkBill("/Purchase_Requisition", "POREQ000961", "1");
+//		SignUtil.checkBill("/Bill1000020", "CGHT000098", "2");
+		SignUtil.checkBill("/Purchase_Requisition", "POREQ000961", "1");
+		SignUtil.checkBill("/PO", "PO20231102002", "1");
 	}
 
 	@Test
 	void t16() {
 		String userIdByPhone = SignUtil.getUserIdByMobile("123");
 		System.out.println(userIdByPhone);
+	}
+
+	@Test
+	void t17() {
+		PaymentRequestDetail p1 = new PaymentRequestDetail();
+		p1.setProjectName("项目1");
+		p1.setAmountForSrc(1212.21);
+		PaymentRequestDetail p2 = new PaymentRequestDetail();
+		p2.setProjectName("项目1");
+		p2.setAmountForSrc(2.21);
+		PaymentRequestDetail p3 = new PaymentRequestDetail();
+		p3.setProjectName("项目2");
+		p3.setAmountForSrc(2000.21);
+
+		List<PaymentRequestDetail> paymentRequestDetailList = new ArrayList<>();
+		paymentRequestDetailList.add(p1);
+		paymentRequestDetailList.add(p2);
+		paymentRequestDetailList.add(p3);
+
+		Map<String, List<PaymentRequestDetail>> projectNameMap = paymentRequestDetailList.stream()
+				.collect(Collectors.groupingBy(PaymentRequestDetail::getProjectName));
+
+		String userIdByPhone = StringUtil.summary(projectNameMap);
+		System.out.println(userIdByPhone);
+	}
+
+	@Test
+	void t18() {
+		List<Employee> employeeList = SignUtil.employeeList();
+		for (Employee employee : employeeList) {
+			System.out.println(employee);
+		}
 	}
 }

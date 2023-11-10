@@ -165,4 +165,19 @@ public class PurchaseOrderDetail {
 	@JSONField(name = "FEntrySelfP0283")
 	private NumberAndNameType entrySelfP0283;
 
+	/**
+	 * 项目名称NAME
+	 */
+	private String projectName;
+
+	/**
+	 * 需求部门NAME
+	 */
+	private String demandDepartmentName;
+
+	/**
+	 * 在建工程编号NAME
+	 */
+	private String constructProjectNumberName;
+
 }

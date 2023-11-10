@@ -37,16 +37,19 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	 *
 	 * @return
 	 */
-	@Scheduled(cron = "0 0 2 ? * *")
+//	@Scheduled(cron = "0 0 2 ? * *")
+	@Scheduled(initialDelay = 60000, fixedRate = 600000)
 	@Override
 	public void syncPurchaseOrder() {
 		List<PurchaseOrder> purchaseOrderList = purchaseOrderList();
 		log.info("状态为4（启动状态）的采购订单数量：{}", purchaseOrderList.size());
 
 		// 过滤掉存储中的ids
-		List<String> purchaseOrderLists = DataUtil.getIdsByFileName(DataTypeEnum.PURCHASE_ORDER.getType());
+		List<String> purchaseOrderLists = DataUtil.getIdsByFileNameFilterInstanceId(DataTypeEnum.PURCHASE_ORDER.getType());
 		purchaseOrderList = purchaseOrderList.stream()
 				.filter(p -> !purchaseOrderLists.contains(p.getBillNo())).collect(Collectors.toList());
+
+//		purchaseOrderList = purchaseOrderList.stream().filter(p -> p.getBillNo().equals("PO20231102002")).collect(Collectors.toList());
 
 		List<String> billNumbers = new ArrayList<>();
 		for (PurchaseOrder po : purchaseOrderList) {

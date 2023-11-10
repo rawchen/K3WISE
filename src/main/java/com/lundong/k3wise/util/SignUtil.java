@@ -303,14 +303,17 @@ public class SignUtil {
 		}
 		// 如果手机号不是空的就用手机号匹配
 		if (!StringUtil.isEmpty(employeePhone)) {
+			log.info("手机匹配：{}", employeePhone);
 			String result = getUserIdByMobile(employeePhone);
 			if (StringUtil.isEmpty(result)) {
+				log.info("姓名匹配：{}", requester.getName());
 				return getUserIdByName(requester.getName());
 			} else {
 				return result;
 			}
 		} else {
 			// 如果手机号是空的就用名字匹配
+			log.info("姓名匹配：{}", requester.getName());
 			return getUserIdByName(requester.getName());
 		}
 	}

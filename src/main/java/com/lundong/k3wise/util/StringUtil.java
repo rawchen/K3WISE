@@ -3,6 +3,9 @@ package com.lundong.k3wise.util;
 import com.lundong.k3wise.entity.*;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author RawChen
@@ -65,9 +68,25 @@ public class StringUtil {
 		} else if (PurchaseOrder.class.isAssignableFrom(p.getClass())) {
 			// 采购订单
 			PurchaseOrder temp = (PurchaseOrder) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商代码\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"编号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"部门\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商代码\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"编号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"部门\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
+			// 汇总三字段：项目名称/需求部门/在建工程编号
+			List<PurchaseOrderDetail> purchaseOrderDetailList = temp.getDetail();
+			for (PurchaseOrderDetail purchaseOrderDetailDetail : purchaseOrderDetailList) {
+				purchaseOrderDetailDetail.setProjectName(purchaseOrderDetailDetail.getEntrySelfP0272().getName());
+				purchaseOrderDetailDetail.setDemandDepartmentName(purchaseOrderDetailDetail.getEntrySelfP0271().getName());
+				purchaseOrderDetailDetail.setConstructProjectNumberName(purchaseOrderDetailDetail.getEntrySelfP0283().getName());
+			}
+			Map<String, List<PurchaseOrderDetail>> projectNameMap = purchaseOrderDetailList.stream()
+					.collect(Collectors.groupingBy(PurchaseOrderDetail::getProjectName));
+			Map<String, List<PurchaseOrderDetail>> demandDepartmentNameMap = purchaseOrderDetailList.stream()
+					.collect(Collectors.groupingBy(PurchaseOrderDetail::getDemandDepartmentName));
+			Map<String, List<PurchaseOrderDetail>> constructProjectNumberNameMap = purchaseOrderDetailList.stream()
+					.collect(Collectors.groupingBy(PurchaseOrderDetail::getConstructProjectNumberName));
+			String projectName = summaryPurchaseOrder(projectNameMap);
+			String demandDepartmentName = summaryPurchaseOrder(demandDepartmentNameMap);
+			String constructProjectNumberName = summaryPurchaseOrder(constructProjectNumberNameMap);
 			for (PurchaseOrderDetail detail : temp.getDetail()) {
 				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":数量},{\"id\":\"d8\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d9\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d10\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"在建工程编号\"}]";
 				detailJson = detailJson
@@ -113,14 +132,34 @@ public class StringUtil {
 					.replace("部门", nullIsEmpty(temp.getDeptId().getName()))
 					.replace("业务员", nullIsEmpty(temp.getEmpId().getName()))
 					.replace("摘要", nullIsEmpty(temp.getExplanation()))
-					.replace("detailJson", detailResultJson.toString());
+					.replace("detailJson", detailResultJson.toString())
+					.replace("项目汇总金额", nullIsEmpty(projectName))
+					.replace("需求部门汇总金额", nullIsEmpty(demandDepartmentName))
+					.replace("在建工程汇总金额", nullIsEmpty(constructProjectNumberName));
 			return json;
 		} else if (PaymentRequest.class.isAssignableFrom(p.getClass())) {
 			// 付款申请单
 			PaymentRequest temp = (PaymentRequest) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"单据日期\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"单据号\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"付款类型\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"核算项目类别\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"核算项目名称\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"金额\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"核算项目开户银行\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"核算项目银行账号\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"核算项目户名\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"付款理由\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"单据日期\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"单据号\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"付款类型\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"核算项目类别\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"核算项目名称\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"金额文本\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"核算项目开户银行\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"核算项目银行账号\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"核算项目户名\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"付款理由\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f14\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f15\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f16\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
+			// 汇总三字段：项目名称/需求部门/在建工程编号
+			List<PaymentRequestDetail> paymentRequestDetailList = temp.getDetail();
+			for (PaymentRequestDetail paymentRequestDetail : paymentRequestDetailList) {
+				paymentRequestDetail.setProjectName(paymentRequestDetail.getBase4().getName());
+				paymentRequestDetail.setDemandDepartmentName(paymentRequestDetail.getBase3().getName());
+				paymentRequestDetail.setConstructProjectNumberName(paymentRequestDetail.getBase10().getName());
+			}
+			Map<String, List<PaymentRequestDetail>> projectNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(PaymentRequestDetail::getProjectName));
+			Map<String, List<PaymentRequestDetail>> demandDepartmentNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(PaymentRequestDetail::getDemandDepartmentName));
+			Map<String, List<PaymentRequestDetail>> constructProjectNumberNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(PaymentRequestDetail::getConstructProjectNumberName));
+			String projectName = summaryPaymentRequest(projectNameMap);
+			String demandDepartmentName = summaryPaymentRequest(demandDepartmentNameMap);
+			String constructProjectNumberName = summaryPaymentRequest(constructProjectNumberNameMap);
+
 			for (PaymentRequestDetail detail : temp.getDetail()) {
 				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"源单类型\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"合同号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"订单单号\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"申请付款数量\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":申请付款金额},{\"id\":\"d8\",\"type\":\"input\",\"value\":\"产品代码\"},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"产品名称\"},{\"id\":\"d10\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"计量单位\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"总数量\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d14\",\"type\":\"number\",\"value\":选单单据金额},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"费用项目代码\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"费用项目名称\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d24\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d25\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d26\",\"type\":\"input\",\"value\":\"在建工程编号\"}]";
 				detailJson = detailJson
@@ -165,20 +204,40 @@ public class StringUtil {
 					.replace("核算项目类别", nullIsEmpty(temp.getItemClassId().getName()))
 					.replace("核算项目名称", nullIsEmpty(temp.getCustomer().getName()))
 					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
-					.replace("金额", nullIsEmpty(temp.getAmountFor()))
+					.replace("金额文本", nullIsEmpty(temp.getAmountFor()))
 					.replace("核算项目开户银行", nullIsEmpty(temp.getRpBank()))
 					.replace("核算项目银行账号", nullIsEmpty(temp.getBankAcct()))
 					.replace("核算项目户名", nullIsEmpty(temp.getBankAcctName()))
 					.replace("付款理由", nullIsEmpty(temp.getExplanation()))
 					.replace("备注", nullIsEmpty(temp.getText()))
-					.replace("detailJson", detailResultJson.toString());
+					.replace("detailJson", detailResultJson.toString())
+					.replace("项目汇总金额", nullIsEmpty(projectName))
+					.replace("需求部门汇总金额", nullIsEmpty(demandDepartmentName))
+					.replace("在建工程汇总金额", nullIsEmpty(constructProjectNumberName))
+					.replace("业务员", nullIsEmpty(temp.getEmployee().getName()));
 			return json;
 		} else if (PurchaseContract.class.isAssignableFrom(p.getClass())) {
 			// 采购合同/合同(应付)
 			PurchaseContract temp = (PurchaseContract) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"合同种类\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"合同日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"合同名称\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"合同号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"核算项目\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"总金额\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"附注\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"合同种类\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"合同日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"合同名称\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"合同号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"核算项目\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"总金额\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"附注\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f14\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
+			// 汇总三字段：项目名称/需求部门/在建工程编号
+			List<PurchaseContractDetail> paymentRequestDetailList = temp.getDetail();
+			for (PurchaseContractDetail paymentRequestDetail : paymentRequestDetailList) {
+				paymentRequestDetail.setProjectName(paymentRequestDetail.getBase1().getName());
+				paymentRequestDetail.setDemandDepartmentName(paymentRequestDetail.getBase().getName());
+				paymentRequestDetail.setConstructProjectNumberName(paymentRequestDetail.getBase7().getName());
+			}
+			Map<String, List<PurchaseContractDetail>> projectNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(PurchaseContractDetail::getProjectName));
+			Map<String, List<PurchaseContractDetail>> demandDepartmentNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(PurchaseContractDetail::getDemandDepartmentName));
+			Map<String, List<PurchaseContractDetail>> constructProjectNumberNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(PurchaseContractDetail::getConstructProjectNumberName));
+			String projectName = summaryPurchaseContract(projectNameMap);
+			String demandDepartmentName = summaryPurchaseContract(demandDepartmentNameMap);
+			String constructProjectNumberName = summaryPurchaseContract(constructProjectNumberNameMap);
 			for (PurchaseContractDetail detail : temp.getDetail()) {
 				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"产品代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"产品名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"计量单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":数量},{\"id\":\"d8\",\"type\":\"input\",\"value\":\"已含税单价\"},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"不含税单价\"},{\"id\":\"d10\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d12\",\"type\":\"number\",\"value\":税额},{\"id\":\"d13\",\"type\":\"number\",\"value\":金额},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d24\",\"type\":\"input\",\"value\":\"在建工程编号\"}]";
 				detailJson = detailJson
@@ -225,14 +284,34 @@ public class StringUtil {
 					.replace("附注", nullIsEmpty(temp.getText()))
 					.replace("业务员", nullIsEmpty(temp.getEmployee().getName()))
 					.replace("摘要", nullIsEmpty(temp.getExplanation()))
-					.replace("detailJson", detailResultJson.toString());
+					.replace("detailJson", detailResultJson.toString())
+					.replace("项目汇总金额", nullIsEmpty(projectName))
+					.replace("需求部门汇总金额", nullIsEmpty(demandDepartmentName))
+					.replace("在建工程汇总金额", nullIsEmpty(constructProjectNumberName));
 			return json;
 		} else if (OutsourcingOrder.class.isAssignableFrom(p.getClass())) {
 			// 委外订单
 			OutsourcingOrder temp = (OutsourcingOrder) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"部门\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"部门\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
+			// 汇总三字段：项目名称/需求部门/在建工程编号
+			List<OutsourcingOrderDetail> paymentRequestDetailList = temp.getDetail();
+			for (OutsourcingOrderDetail paymentRequestDetail : paymentRequestDetailList) {
+				paymentRequestDetail.setProjectName(paymentRequestDetail.getBase2().getName());
+				paymentRequestDetail.setDemandDepartmentName(paymentRequestDetail.getBase1().getName());
+				paymentRequestDetail.setConstructProjectNumberName(paymentRequestDetail.getBase9().getName());
+			}
+			Map<String, List<OutsourcingOrderDetail>> projectNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(OutsourcingOrderDetail::getProjectName));
+			Map<String, List<OutsourcingOrderDetail>> demandDepartmentNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(OutsourcingOrderDetail::getDemandDepartmentName));
+			Map<String, List<OutsourcingOrderDetail>> constructProjectNumberNameMap = paymentRequestDetailList.stream()
+					.collect(Collectors.groupingBy(OutsourcingOrderDetail::getConstructProjectNumberName));
+			String projectName = summaryOutsourcingOrder(projectNameMap);
+			String demandDepartmentName = summaryOutsourcingOrder(demandDepartmentNameMap);
+			String constructProjectNumberName = summaryOutsourcingOrder(constructProjectNumberNameMap);
+
 			for (OutsourcingOrderDetail detail : temp.getDetail()) {
 				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":总数量},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d10\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"BOM编号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d24\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d25\",\"type\":\"input\",\"value\":\"在建工程编号\"},{\"id\":\"d26\",\"type\":\"input\",\"value\":\"建议发料日期\"}]";
 				detailJson = detailJson
@@ -279,7 +358,10 @@ public class StringUtil {
 					.replace("业务员", nullIsEmpty(temp.getEmployee().getName()))
 					.replace("汇率", nullIsEmpty(temp.getExchangeRate()))
 					.replace("摘要", nullIsEmpty(temp.getSummary()))
-					.replace("detailJson", detailResultJson.toString());
+					.replace("detailJson", detailResultJson.toString())
+					.replace("项目汇总金额", nullIsEmpty(projectName))
+					.replace("需求部门汇总金额", nullIsEmpty(demandDepartmentName))
+					.replace("在建工程汇总金额", nullIsEmpty(constructProjectNumberName));
 			return json;
 		}
 		return null;
@@ -392,5 +474,121 @@ public class StringUtil {
 	 */
 	public static boolean isEmpty(String str) {
 		return str == null || "".equals(str);
+	}
+
+	/**
+	 * 付款申请单汇总
+	 *
+	 * @param projectNameMap
+	 * @return
+	 */
+	public static String summaryPaymentRequest(Map<String, List<PaymentRequestDetail>> projectNameMap) {
+		String projectName = "";
+		if (projectNameMap == null || projectNameMap.keySet().isEmpty()) {
+			return "";
+		}
+		for (String s : projectNameMap.keySet()) {
+			if (s == null || s.equals("")) {
+				continue;
+			}
+			String tempText = "";
+			List<PaymentRequestDetail> paymentRequestDetails = projectNameMap.get(s);
+			double value = paymentRequestDetails.stream()
+					.mapToDouble(PaymentRequestDetail::getApplyAmountFor)
+					.sum();
+			tempText = s + ":" + value + " | ";
+			projectName += tempText;
+		}
+		if (projectName.endsWith(" | ")) {
+			projectName = projectName.substring(0, projectName.length() - 3);
+		}
+		return projectName;
+	}
+
+	/**
+	 * 采购订单汇总
+	 *
+	 * @param projectNameMap
+	 * @return
+	 */
+	public static String summaryPurchaseOrder(Map<String, List<PurchaseOrderDetail>> projectNameMap) {
+		String projectName = "";
+		if (projectNameMap == null || projectNameMap.keySet().isEmpty()) {
+			return "";
+		}
+		for (String s : projectNameMap.keySet()) {
+			if (s == null || s.equals("")) {
+				continue;
+			}
+			String tempText = "";
+			List<PurchaseOrderDetail> paymentRequestDetails = projectNameMap.get(s);
+			double value = paymentRequestDetails.stream()
+					.mapToDouble(PurchaseOrderDetail::getAllAmount)
+					.sum();
+			tempText = s + ":" + value + " | ";
+			projectName += tempText;
+		}
+		if (projectName.endsWith(" | ")) {
+			projectName = projectName.substring(0, projectName.length() - 3);
+		}
+		return projectName;
+	}
+
+	/**
+	 * 采购合同汇总
+	 *
+	 * @param projectNameMap
+	 * @return
+	 */
+	public static String summaryPurchaseContract(Map<String, List<PurchaseContractDetail>> projectNameMap) {
+		String projectName = "";
+		if (projectNameMap == null || projectNameMap.keySet().isEmpty()) {
+			return "";
+		}
+		for (String s : projectNameMap.keySet()) {
+			if (s == null || s.equals("")) {
+				continue;
+			}
+			String tempText = "";
+			List<PurchaseContractDetail> purchaseContractDetails = projectNameMap.get(s);
+			double value = purchaseContractDetails.stream()
+					.mapToDouble(PurchaseContractDetail::getAmountIncludeTaxFor)
+					.sum();
+			tempText = s + ":" + value + " | ";
+			projectName += tempText;
+		}
+		if (projectName.endsWith(" | ")) {
+			projectName = projectName.substring(0, projectName.length() - 3);
+		}
+		return projectName;
+	}
+
+	/**
+	 * 委外订单汇总
+	 *
+	 * @param projectNameMap
+	 * @return
+	 */
+	public static String summaryOutsourcingOrder(Map<String, List<OutsourcingOrderDetail>> projectNameMap) {
+		String projectName = "";
+		if (projectNameMap == null || projectNameMap.keySet().isEmpty()) {
+			return "";
+		}
+		for (String s : projectNameMap.keySet()) {
+			if (s == null || s.equals("")) {
+				continue;
+			}
+			String tempText = "";
+			List<OutsourcingOrderDetail> outsourcingOrderDetails = projectNameMap.get(s);
+			double value = outsourcingOrderDetails.stream()
+					.mapToDouble(OutsourcingOrderDetail::getAllAmount)
+					.sum();
+			tempText = s + ":" + value + " | ";
+			projectName += tempText;
+		}
+		if (projectName.endsWith(" | ")) {
+			projectName = projectName.substring(0, projectName.length() - 3);
+		}
+		return projectName;
 	}
 }

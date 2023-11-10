@@ -37,14 +37,15 @@ public class PurchaseContractServiceImpl implements PurchaseContractService {
 	 *
 	 * @return
 	 */
-	@Scheduled(cron = "0 0 3 ? * *")
+//	@Scheduled(cron = "0 0 3 ? * *")
+	@Scheduled(initialDelay = 120000, fixedRate = 600000)
 	@Override
 	public void syncPurchaseContract() {
 		List<PurchaseContract> purchaseContractList = purchaseContractList();
 		log.info("状态为4（启动状态）的采购合同/合同(应付)数量：{}", purchaseContractList.size());
 
 		// 过滤掉存储中的ids
-		List<String> purchaseOrderLists = DataUtil.getIdsByFileName(DataTypeEnum.PURCHASE_CONTRACT.getType());
+		List<String> purchaseOrderLists = DataUtil.getIdsByFileNameFilterInstanceId(DataTypeEnum.PURCHASE_CONTRACT.getType());
 		purchaseContractList = purchaseContractList.stream()
 				.filter(p -> !purchaseOrderLists.contains(p.getContractNo())).collect(Collectors.toList());
 

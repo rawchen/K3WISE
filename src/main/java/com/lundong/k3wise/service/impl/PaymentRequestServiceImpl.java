@@ -37,14 +37,15 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 	 *
 	 * @return
 	 */
-	@Scheduled(cron = "0 0 4 ? * *")
+//	@Scheduled(cron = "0 0 4 ? * *")
+	@Scheduled(initialDelay = 180000, fixedRate = 600000)
 	@Override
 	public void syncPaymentRequest() {
 		List<PaymentRequest> paymentRequestList = paymentRequestList();
 		log.info("状态为4（启动状态）的付款申请单数量：{}", paymentRequestList.size());
 
 		// 过滤掉存储中的ids
-		List<String> paymentRequestLists = DataUtil.getIdsByFileName(DataTypeEnum.PAYMENT_REQUEST.getType());
+		List<String> paymentRequestLists = DataUtil.getIdsByFileNameFilterInstanceId(DataTypeEnum.PAYMENT_REQUEST.getType());
 		paymentRequestList = paymentRequestList.stream()
 				.filter(p -> !paymentRequestLists.contains(p.getNumber())).collect(Collectors.toList());
 

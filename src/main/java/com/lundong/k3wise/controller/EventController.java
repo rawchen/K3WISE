@@ -117,10 +117,10 @@ public class EventController {
 							} else if (ApprovalInstanceEnum.CANCELED.getType().equals(status)) {
 								// 审批已撤回
 								// if在同步列表里面出现过，取消已同步单据标识
-								List<String> list = DataUtil.getIdsByFileNameFilterInstanceId(dataTableName);
+								List<String> list = DataUtil.getIdsByFileName(dataTableName);
 								for (String s : list) {
 									String temp = formNumber + "_" + instanceCode;
-									if (s.equals(formNumber)) {
+									if (s.equals(temp)) {
 										DataUtil.removeByFileName(temp, dataTableName);
 										// 退回单据状态为保存状态（驳回）
 										SignUtil.checkBill(formCode, formNumber, CheckBillStatusEnum.REJECT.getCode());
@@ -130,10 +130,10 @@ public class EventController {
 							} else if (ApprovalInstanceEnum.REJECTED.getType().equals(status)) {
 								// 审批已拒绝
 								// if在同步列表里面出现过，取消已同步单据标识
-								List<String> list = DataUtil.getIdsByFileNameFilterInstanceId(dataTableName);
+								List<String> list = DataUtil.getIdsByFileName(dataTableName);
 								for (String s : list) {
 									String temp = formNumber + "_" + instanceCode;
-									if (s.equals(formNumber)) {
+									if (s.equals(temp)) {
 										DataUtil.removeByFileName(temp, dataTableName);
 										// 退回单据状态为保存状态（驳回）
 										SignUtil.checkBill(formCode, formNumber, CheckBillStatusEnum.REJECT.getCode());

@@ -37,7 +37,8 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 	 *
 	 * @return
 	 */
-	@Scheduled(cron = "0 0 1 ? * *")
+//	@Scheduled(cron = "0 0 1 ? * *")
+	@Scheduled(fixedRate = 600000)
 	@Override
 	public void syncPurchaseRequisition() {
 		List<PurchaseRequisition> purchaseRequisitionList = purchaseRequisitionList();
@@ -50,6 +51,8 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 		List<String> purchaseOrderLists = DataUtil.getIdsByFileNameFilterInstanceId(DataTypeEnum.PURCHASE_REQUISITION.getType());
 		purchaseRequisitionList = purchaseRequisitionList.stream()
 				.filter(p -> !purchaseOrderLists.contains(p.getBillNo())).collect(Collectors.toList());
+
+//		purchaseRequisitionList = purchaseRequisitionList.stream().filter(p -> p.getBillNo().equals("POREQ000961")).collect(Collectors.toList());
 
 		List<String> billNumbers = new ArrayList<>();
 		for (PurchaseRequisition pr : purchaseRequisitionList) {

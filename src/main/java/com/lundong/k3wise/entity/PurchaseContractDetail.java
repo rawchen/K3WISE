@@ -162,4 +162,19 @@ public class PurchaseContractDetail {
 	@JSONField(name = "FText3")
 	private String text3;
 
+	/**
+	 * 项目名称NAME
+	 */
+	private String projectName;
+
+	/**
+	 * 需求部门NAME
+	 */
+	private String demandDepartmentName;
+
+	/**
+	 * 在建工程编号NAME
+	 */
+	private String constructProjectNumberName;
+
 }
