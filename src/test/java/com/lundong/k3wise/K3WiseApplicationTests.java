@@ -173,7 +173,7 @@ class K3WiseApplicationTests {
 		Map<String, List<PaymentRequestDetail>> projectNameMap = paymentRequestDetailList.stream()
 				.collect(Collectors.groupingBy(PaymentRequestDetail::getProjectName));
 
-		String userIdByPhone = StringUtil.summary(projectNameMap);
+		String userIdByPhone = StringUtil.summaryPaymentRequest(projectNameMap);
 		System.out.println(userIdByPhone);
 	}
 
