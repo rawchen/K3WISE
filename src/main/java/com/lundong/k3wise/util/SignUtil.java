@@ -116,8 +116,39 @@ public class SignUtil {
 		JSONObject object = new JSONObject();
 		object.put("approval_code", approvalCode);
 		object.put("user_id", userId);
-		object.put("form", StringUtil.combinFormString(pr));
+		object.put("form", StringUtil.clearSpecialCharacter(StringUtil.combinFormString(pr)));
 		log.info("combinFormString: {}", StringUtil.combinFormString(pr));
+		String resultStr = HttpRequest.post("https://open.feishu.cn/open-apis/approval/v4/instances")
+				.header("Authorization", "Bearer " + accessToken)
+				.form(object)
+				.timeout(2000)
+				.execute().body();
+		log.info("generateApprovalInstance(): {}", resultStr);
+		if (StringUtils.isNotEmpty(resultStr)) {
+			JSONObject resultObject = JSON.parseObject(resultStr);
+			if (resultObject.getInteger("code") == 0) {
+				return resultObject.getJSONObject("data").getString("instance_code");
+			} else {
+				log.error("生成审批实例失败: {}", resultStr);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 创建审批实例测试
+	 *
+	 * @param accessToken
+	 * @param form
+	 * @param approvalCode
+	 * @param userId
+	 * @return
+	 */
+	public static <T> String generateApprovalInstanceTest(String accessToken, String approvalCode, String userId, String form) {
+		JSONObject object = new JSONObject();
+		object.put("approval_code", approvalCode);
+		object.put("user_id", userId);
+		object.put("form", form);
 		String resultStr = HttpRequest.post("https://open.feishu.cn/open-apis/approval/v4/instances")
 				.header("Authorization", "Bearer " + accessToken)
 				.form(object)

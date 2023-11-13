@@ -3,6 +3,7 @@ package com.lundong.k3wise;
 import com.alibaba.fastjson.JSONObject;
 import com.lundong.k3wise.entity.*;
 import com.lundong.k3wise.enums.DataTypeEnum;
+import com.lundong.k3wise.service.OutsourcingOrderService;
 import com.lundong.k3wise.service.PaymentRequestService;
 import com.lundong.k3wise.service.PurchaseOrderService;
 import com.lundong.k3wise.service.PurchaseRequisitionService;
@@ -31,6 +32,9 @@ class K3WiseApplicationTests {
 
 	@Autowired
 	private PaymentRequestService paymentRequestService;
+
+	@Autowired
+	private OutsourcingOrderService outsourcingOrderService;
 
 	@Test
 	void contextLoads() {
@@ -183,5 +187,21 @@ class K3WiseApplicationTests {
 		for (Employee employee : employeeList) {
 			System.out.println(employee);
 		}
+	}
+
+	@Test
+	void t19() {
+		List<OutsourcingOrder> outsourcingOrders = outsourcingOrderService.outsourcingOrderList();
+		for (OutsourcingOrder outsourcingOrder : outsourcingOrders) {
+			System.out.println(outsourcingOrder);
+		}
+	}
+
+	@Test
+	void t20() {
+		String a = "12345\\678";
+		System.out.println(a);
+		SignUtil.generateApprovalInstanceTest("t-g104bahIERSSUD7HMCDBPATV3QWYAFSOWAMIKHK4", "4DBD1FFD-5AF5-4875-A0B9-A51C318EE5A2", "fa222fd1",
+				"[{\"id\":\"f1\", \"type\": \"input\", \"value\":\"" + StringUtil.nullIsEmpty(a) + "\"}]");
 	}
 }

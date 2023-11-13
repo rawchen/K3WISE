@@ -118,6 +118,8 @@ public class OutsourcingOrderServiceImpl implements OutsourcingOrderService {
                     }
                     return prList;
                 }
+            } else {
+                log.error("获取K3WISE状态为4（启动状态）的委外订单列表接口结果：{}", resultStr);
             }
         }
         return Collections.emptyList();
