@@ -116,7 +116,7 @@ public class SignUtil {
 		JSONObject object = new JSONObject();
 		object.put("approval_code", approvalCode);
 		object.put("user_id", userId);
-		object.put("form", StringUtil.clearSpecialCharacter(StringUtil.combinFormString(pr)));
+		object.put("form", StringUtil.combinFormString(pr));
 		log.info("combinFormString: {}", StringUtil.combinFormString(pr));
 		String resultStr = HttpRequest.post("https://open.feishu.cn/open-apis/approval/v4/instances")
 				.header("Authorization", "Bearer " + accessToken)

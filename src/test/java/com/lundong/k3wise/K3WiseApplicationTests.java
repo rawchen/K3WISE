@@ -199,9 +199,9 @@ class K3WiseApplicationTests {
 
 	@Test
 	void t20() {
-		String a = "12345\\678";
+		String a = "12345\"'\\67&8	/1<>?!";
 		System.out.println(a);
-		SignUtil.generateApprovalInstanceTest("t-g104bahIERSSUD7HMCDBPATV3QWYAFSOWAMIKHK4", "4DBD1FFD-5AF5-4875-A0B9-A51C318EE5A2", "fa222fd1",
+		SignUtil.generateApprovalInstanceTest("t-g104btexMK22MZDW6UUJNXCSCDRBBGCUKEZK73YL", "4DBD1FFD-5AF5-4875-A0B9-A51C318EE5A2", "fa222fd1",
 				"[{\"id\":\"f1\", \"type\": \"input\", \"value\":\"" + StringUtil.nullIsEmpty(a) + "\"}]");
 	}
 }

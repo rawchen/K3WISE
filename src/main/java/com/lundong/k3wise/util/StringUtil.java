@@ -419,8 +419,7 @@ public class StringUtil {
 				if (str.endsWith("\r\n")) {
 					str = str.substring(0, str.length() - 2);
 				}
-				str = str.replaceAll("\\\\", "\\\\\\\\");
-				return str;
+				return escapeHtml(str);
 			}
 		}
 	}
@@ -604,5 +603,29 @@ public class StringUtil {
 			json = json.replaceAll("\\\\", "\\\\\\\\");
 		}
 		return json;
+	}
+
+	public static String escapeHtml(String input) {
+		if (input == null) {
+			return null;
+		}
+
+		StringBuilder escaped = new StringBuilder();
+		for (char c : input.toCharArray()) {
+			switch (c) {
+				case '"':
+					escaped.append("\\\"");
+					break;
+				case '\\':
+					escaped.append("\\\\");
+					break;
+				case '	':
+					escaped.append("    ");
+					break;
+				default:
+					escaped.append(c);
+			}
+		}
+		return escaped.toString();
 	}
 }
