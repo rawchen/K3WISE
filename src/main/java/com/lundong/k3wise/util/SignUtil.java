@@ -1,6 +1,7 @@
 package com.lundong.k3wise.util;
 
 import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -27,24 +28,53 @@ public class SignUtil {
 	 * 飞书自建应用获取tenant_access_token
 	 */
 	public static String getAccessToken(String appId, String appSecret) {
+
 		JSONObject object = new JSONObject();
 		object.put("app_id", appId);
 		object.put("app_secret", appSecret);
-		String resultStr = HttpRequest.post("https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal")
-				.form(object)
-				.timeout(2000)
-				.execute().body();
-		if (StringUtils.isNotEmpty(resultStr)) {
-			JSONObject resultObject = (JSONObject) JSON.parse(resultStr);
-			if (!"0".equals(resultObject.getString("code"))) {
-				return "";
-			} else {
-				String tenantAccessToken = resultObject.getString("tenant_access_token");
-				if (tenantAccessToken != null) {
-					return tenantAccessToken;
+		String resultStr = "";
+		JSONObject resultObject = null;
+		for (int i = 0; i < 3; i++) {
+			try {
+				HttpResponse execute = HttpRequest.post("https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal")
+						.form(object)
+						.execute();
+				resultStr = execute.body();
+				execute.close();
+				if (StringUtils.isNotEmpty(resultStr)) {
+					resultObject = JSON.parseObject(resultStr);
+					if (resultObject.getInteger("code") != 0) {
+						log.error("获取tenant_access_token失败，重试 {} 次, body: {}", i + 1, resultStr);
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException ecp) {
+							log.error("sleep异常", ecp);
+						}
+					}
+				}
+			} catch (Exception e) {
+				log.error("获取tenant_access_token异常，重试 {} 次, message: {}, body: {}", i + 1, e.getMessage(), resultStr);
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException ecp) {
+					log.error("sleep异常", ecp);
 				}
 			}
+			if (resultObject != null && resultObject.getInteger("code") == 0) {
+				break;
+			}
 		}
+		// 重试完检测
+		if (resultObject == null || resultObject.getInteger("code") != 0) {
+			log.error("重试3次获取tenant_access_token后都失败");
+			return "";
+		} else {
+			String tenantAccessToken = resultObject.getString("tenant_access_token");
+			if (tenantAccessToken != null) {
+				return tenantAccessToken;
+			}
+		}
+		log.error("access_token获取不成功: {}", resultStr);
 		return "";
 	}
 
@@ -118,21 +148,47 @@ public class SignUtil {
 		object.put("user_id", userId);
 		object.put("form", StringUtil.combinFormString(pr));
 		log.info("combinFormString: {}", StringUtil.combinFormString(pr));
-		String resultStr = HttpRequest.post("https://open.feishu.cn/open-apis/approval/v4/instances")
-				.header("Authorization", "Bearer " + accessToken)
-				.form(object)
-				.timeout(2000)
-				.execute().body();
-		log.info("generateApprovalInstance(): {}", resultStr);
-		if (StringUtils.isNotEmpty(resultStr)) {
-			JSONObject resultObject = JSON.parseObject(resultStr);
-			if (resultObject.getInteger("code") == 0) {
-				return resultObject.getJSONObject("data").getString("instance_code");
-			} else {
-				log.error("生成审批实例失败: {}", resultStr);
+
+		String resultStr = "";
+		JSONObject resultObject = null;
+		for (int i = 0; i < 3; i++) {
+			try {
+				resultStr = HttpRequest.post("https://open.feishu.cn/open-apis/approval/v4/instances")
+						.header("Authorization", "Bearer " + accessToken)
+						.form(object)
+						.timeout(2000)
+						.execute().body();
+				log.info("generateApprovalInstance(): {}", resultStr);
+				if (StringUtils.isNotEmpty(resultStr)) {
+					resultObject = JSON.parseObject(resultStr);
+					if (resultObject.getInteger("code") != 0) {
+						log.error("创建审批实例失败，重试 {} 次, body: {}", i + 1, resultStr);
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException ecp) {
+							log.error("sleep异常", ecp);
+						}
+					}
+				}
+			} catch (Exception e) {
+				log.error("创建审批实例异常，重试 {} 次, message: {}, body: {}", i + 1, e.getMessage(), resultStr);
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException ecp) {
+					log.error("sleep异常", ecp);
+				}
+			}
+			if (resultObject != null && resultObject.getInteger("code") == 0) {
+				break;
 			}
 		}
-		return null;
+		// 重试完检测
+		if (resultObject == null || resultObject.getInteger("code") != 0) {
+			log.error("重试3次创建审批实例后都失败");
+			return "";
+		} else {
+			return resultObject.getJSONObject("data").getString("instance_code");
+		}
 	}
 
 	/**
@@ -189,19 +245,46 @@ public class SignUtil {
 	public static ApprovalInstance approvalInstanceDetail(String accessToken, String instanceId) {
 		JSONObject object = new JSONObject();
 		object.put("user_id_type", "user_id");
-		String resultStr = HttpRequest.get("https://open.feishu.cn/open-apis/approval/v4/instances/" + instanceId)
-				.header("Authorization", "Bearer " + accessToken)
-				.form(object)
-				.timeout(2000)
-				.execute().body();
-		System.out.println(resultStr);
-		if (StringUtils.isNotEmpty(resultStr)) {
-			JSONObject resultObject = JSON.parseObject(resultStr);
-			if (resultObject.getInteger("code") == 0) {
-				return resultObject.getJSONObject("data").toJavaObject(ApprovalInstance.class);
+		String resultStr = "";
+		JSONObject resultObject = null;
+		for (int i = 0; i < 3; i++) {
+			try {
+				resultStr = HttpRequest.get("https://open.feishu.cn/open-apis/approval/v4/instances/" + instanceId)
+						.header("Authorization", "Bearer " + accessToken)
+						.form(object)
+						.execute().body();
+				log.info("获取单个审批实例详情接口: {}", resultStr);
+				if (StringUtils.isNotEmpty(resultStr)) {
+					resultObject = JSON.parseObject(resultStr);
+					if (resultObject.getInteger("code") != 0) {
+						log.error("获取单个审批实例详情接口失败，重试 {} 次, body: {}", i + 1, resultStr);
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException ecp) {
+							log.error("sleep异常", ecp);
+						}
+					}
+				}
+			} catch (Exception e) {
+				log.error("获取单个审批实例详情接口异常，重试 {} 次, message: {}, body: {}", i + 1, e.getMessage(), resultStr);
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException ecp) {
+					log.error("sleep异常", ecp);
+				}
+			}
+			if (resultObject != null && resultObject.getInteger("code") == 0) {
+				break;
 			}
 		}
-		return null;
+
+		// 重试完检测
+		if (resultObject == null || resultObject.getInteger("code") != 0) {
+			log.error("重试3次获取tenant_access_token后都失败");
+			return null;
+		} else {
+			return resultObject.getJSONObject("data").toJavaObject(ApprovalInstance.class);
+		}
 	}
 
 	/**

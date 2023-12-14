@@ -1,5 +1,6 @@
 package com.lundong.k3wise.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -42,9 +43,6 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 	@Override
 	public void syncPurchaseRequisition() {
 		List<PurchaseRequisition> purchaseRequisitionList = purchaseRequisitionList();
-		for (PurchaseRequisition purchaseRequisition : purchaseRequisitionList) {
-			System.out.println(purchaseRequisition);
-		}
 		log.info("状态为4（启动状态）的采购申请单数量：{}", purchaseRequisitionList.size());
 
 		// 过滤掉存储中的ids
@@ -65,7 +63,7 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 			String userId = SignUtil.getUserIdByEmployee(requester);
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_REQUISITION_APPROVAL_CODE, userId);
-			if (instanceCode != null) {
+			if (!StrUtil.isEmpty(instanceCode)) {
 				billNumbers.add(pr.getBillNo() + "_" + instanceCode);
 			}
 		}

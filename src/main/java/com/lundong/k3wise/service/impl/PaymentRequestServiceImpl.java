@@ -1,5 +1,6 @@
 package com.lundong.k3wise.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -60,7 +61,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 			String userId = SignUtil.getUserIdByEmployee(requester);
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(po, Constants.PAYMENT_REQUEST_APPROVAL_CODE, userId);
-			if (instanceCode != null) {
+			if (!StrUtil.isEmpty(instanceCode)) {
 				billNumbers.add(po.getNumber() + "_" + instanceCode);
 			}
 		}
@@ -76,7 +77,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 	@Override
 	public List<PaymentRequest> paymentRequestList() {
 		List<PaymentRequest> prList = new ArrayList<>();
-		String paramJson = "{\"Data\": {\"Fields\": \"FNumber,Fdate,FMultiCheckStatus,FItemClassID,FPayBillID_CN\",\"Top\": \"100\",\"PageSize\": \"10000\",\"PageIndex\": \"1\",\"Filter\": \"FMultiCheckStatus='4'\",\"OrderBy\": \"\",\"SelectPage\": \"2\"}}";
+		String paramJson = "{\"Data\": {\"Fields\": \"FNumber,Fdate,FMultiCheckStatus,FItemClassID,FPayBillID_CN\",\"Top\": \"100\",\"PageSize\": \"10000\",\"PageIndex\": \"1\",\"Filter\": \"FMultiCheckStatus='4'\",\"OrderBy\": \"\",\"SelectPage\": \"1\"}}";
 		String resultStr = HttpRequest.post(Constants.K3API + Constants.PAYMENT_REQUEST + Constants.GET_LIST + SignUtil.getToken())
 				.body(paramJson)
 				.timeout(2000)

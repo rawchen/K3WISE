@@ -99,6 +99,9 @@ public class EventController {
 								|| ApprovalInstanceEnum.REJECTED.getType().equals(status)) {
 							// 根据审批实例ID查询审批单
 							ApprovalInstance approvalInstance = SignUtil.approvalInstanceDetail(instanceCode);
+							if (approvalInstance == null) {
+								return;
+							}
 							// 审批实例的单据号
 							String formNumber = "";
 							List<ApprovalInstanceForm> approvalInstanceForms =
@@ -108,7 +111,6 @@ public class EventController {
 									formNumber = approvalInstanceForm.getValue();
 									break;
 								}
-								System.out.println(approvalInstanceForm);
 							}
 							// 审批通过
 							if (ApprovalInstanceEnum.APPROVED.getType().equals(status)) {

@@ -622,7 +622,10 @@ public class StringUtil {
 				case '	':
 					escaped.append("    ");
 					break;
-				default:
+				case '\r':
+                case '\n':
+                    break;
+                default:
 					escaped.append(c);
 			}
 		}

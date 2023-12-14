@@ -1,5 +1,6 @@
 package com.lundong.k3wise.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -60,7 +61,7 @@ public class PurchaseContractServiceImpl implements PurchaseContractService {
 			String userId = SignUtil.getUserIdByEmployee(requester);
 			// 生成审批实例
 			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_CONTRACT_APPROVAL_CODE, userId);
-			if (instanceCode != null) {
+			if (!StrUtil.isEmpty(instanceCode)) {
 				billNumbers.add(pr.getContractNo() + "_" + instanceCode);
 			}
 		}
