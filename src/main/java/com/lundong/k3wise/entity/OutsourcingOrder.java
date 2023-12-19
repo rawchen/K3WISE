@@ -62,6 +62,12 @@ public class OutsourcingOrder {
 	private NumberAndNameType employee;
 
 	/**
+	 * 制单人
+	 */
+	@JSONField(name = "FBillerID")
+	private NumberAndNameType billerId;
+
+	/**
 	 * 汇率
 	 */
 	@JSONField(name = "FExchangeRate")

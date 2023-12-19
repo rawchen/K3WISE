@@ -106,6 +106,13 @@ public class PurchaseOrderDetail {
 	private String sourceBillNo;
 
 	/**
+	 * 物料归属
+	 */
+	@JSONField(name = "FEntrySelfP0273")
+	private NumberAndNameType entrySelfP0273;
+
+
+	/**
 	 * 请购人
 	 */
 	@JSONField(name = "FEntrySelfP0278")

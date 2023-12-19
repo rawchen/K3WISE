@@ -60,7 +60,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 			// 通过编号获取手机号，再根据手机号获取userId，如果手机号匹配为空就姓名匹配
 			String userId = SignUtil.getUserIdByEmployee(requester);
 			// 生成审批实例
-			String instanceCode = SignUtil.generateApprovalInstance(po, Constants.PAYMENT_REQUEST_APPROVAL_CODE, userId);
+			String instanceCode = SignUtil.generateApprovalInstance(po, Constants.PAYMENT_REQUEST_APPROVAL_CODE, userId, null);
 			if (!StrUtil.isEmpty(instanceCode)) {
 				billNumbers.add(po.getNumber() + "_" + instanceCode);
 			}

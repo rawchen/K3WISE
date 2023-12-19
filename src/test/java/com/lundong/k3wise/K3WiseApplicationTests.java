@@ -88,7 +88,7 @@ class K3WiseApplicationTests {
 
 	@Test
 	void t08() {
-		String r = getUserIdByName("陈双全");
+		String r = getUserIdByName("小覃");
 		System.out.println(r);
 
 	}

@@ -19,7 +19,7 @@ public class StringUtil {
 	 * @param p
 	 * @return
 	 */
-	public static <T>String combinFormString(T p) {
+	public static <T>String combinFormString(T p, String employeeId) {
 		if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
 			// 采购申请单
 			PurchaseRequisition temp = (PurchaseRequisition) p;
@@ -68,7 +68,7 @@ public class StringUtil {
 		} else if (PurchaseOrder.class.isAssignableFrom(p.getClass())) {
 			// 采购订单
 			PurchaseOrder temp = (PurchaseOrder) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商代码\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"编号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"部门测\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商代码\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"编号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"部门测\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f99\",\"type\":\"contact\",\"value\":[\"业务员字段\"]},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			// 汇总三字段：项目名称/需求部门/在建工程编号
@@ -88,7 +88,7 @@ public class StringUtil {
 			String demandDepartmentName = summaryPurchaseOrder(demandDepartmentNameMap);
 			String constructProjectNumberName = summaryPurchaseOrder(constructProjectNumberNameMap);
 			for (PurchaseOrderDetail detail : temp.getDetail()) {
-				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":数量},{\"id\":\"d8\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d9\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d10\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"在建工程编号\"}]";
+				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":数量},{\"id\":\"d8\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d9\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d10\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"在建工程编号\"},{\"id\":\"d99\",\"type\":\"input\",\"value\":\"物料归属\"}]";
 				detailJson = detailJson
 						.replace("物料代码", nullIsEmpty(detail.getItemId().getNumber()))
 						.replace("物料名称", nullIsEmpty(detail.getItemId().getName()))
@@ -108,6 +108,7 @@ public class StringUtil {
 						.replace("需求部门", nullIsEmpty(detail.getEntrySelfP0271().getName()))
 						.replace("物料类别", nullIsEmpty(detail.getEntrySelfP0274().getName()))
 						.replace("是否预算内", nullIsEmpty(detail.getEntrySelfP0280().getName()))
+						.replace("物料归属", nullIsEmpty(detail.getEntrySelfP0273().getName()))
 						.replace("预算一类", nullIsEmpty(detail.getEntrySelfP0275().getName()))
 						.replace("预算二类", nullIsEmpty(detail.getEntrySelfP0276().getName()))
 						.replace("采购申请备注", nullIsEmpty(detail.getEntrySelfP0279()))
@@ -130,7 +131,7 @@ public class StringUtil {
 					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
 					.replace("汇率", nullIsEmpty(temp.getExchangeRate().toString()))
 					.replace("部门测", nullIsEmpty(temp.getDeptId().getName()))
-					.replace("业务员", nullIsEmpty(temp.getEmpId().getName()))
+					.replace("业务员字段", nullIsEmpty(employeeId))
 					.replace("摘要", nullIsEmpty(temp.getExplanation()))
 					.replace("detailJson", detailResultJson.toString())
 					.replace("项目汇总金额", nullIsEmpty(projectName))
@@ -219,7 +220,7 @@ public class StringUtil {
 		} else if (PurchaseContract.class.isAssignableFrom(p.getClass())) {
 			// 采购合同/合同(应付)
 			PurchaseContract temp = (PurchaseContract) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"合同种类\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"合同日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"合同名称\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"合同号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"核算项目\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"总金额测\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"附注\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f14\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"合同种类\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"合同日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"合同名称\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"合同号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"核算项目\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"总金额测\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"附注\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f14\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f99\",\"type\":\"contact\",\"value\":[\"业务员字段\"]},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			// 汇总三字段：项目名称/需求部门/在建工程编号
@@ -282,7 +283,7 @@ public class StringUtil {
 					.replace("核算项目", nullIsEmpty(temp.getCustomer().getName()))
 					.replace("总金额测", nullIsEmpty(temp.getTotalAmountFor()))
 					.replace("附注", nullIsEmpty(temp.getText()))
-					.replace("业务员", nullIsEmpty(temp.getEmployee().getName()))
+					.replace("业务员字段", nullIsEmpty(employeeId))
 					.replace("摘要", nullIsEmpty(temp.getExplanation()))
 					.replace("detailJson", detailResultJson.toString())
 					.replace("项目汇总金额", nullIsEmpty(projectName))
@@ -292,7 +293,7 @@ public class StringUtil {
 		} else if (OutsourcingOrder.class.isAssignableFrom(p.getClass())) {
 			// 委外订单
 			OutsourcingOrder temp = (OutsourcingOrder) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"部门测\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"部门测\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f99\",\"type\":\"contact\",\"value\":[\"业务员字段\"]},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			// 汇总三字段：项目名称/需求部门/在建工程编号
@@ -313,7 +314,7 @@ public class StringUtil {
 			String constructProjectNumberName = summaryOutsourcingOrder(constructProjectNumberNameMap);
 
 			for (OutsourcingOrderDetail detail : temp.getDetail()) {
-				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":总数量},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d10\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"BOM编号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d24\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d25\",\"type\":\"input\",\"value\":\"在建工程编号\"},{\"id\":\"d26\",\"type\":\"input\",\"value\":\"建议发料日期\"}]";
+				String detailJson = "[{\"id\":\"d2\",\"type\":\"input\",\"value\":\"物料代码\"},{\"id\":\"d3\",\"type\":\"input\",\"value\":\"物料名称\"},{\"id\":\"d4\",\"type\":\"input\",\"value\":\"规格型号\"},{\"id\":\"d5\",\"type\":\"input\",\"value\":\"辅助属性\"},{\"id\":\"d6\",\"type\":\"input\",\"value\":\"单位\"},{\"id\":\"d7\",\"type\":\"number\",\"value\":总数量},{\"id\":\"d9\",\"type\":\"input\",\"value\":\"含税单价\"},{\"id\":\"d10\",\"type\":\"number\",\"value\":价税合计},{\"id\":\"d11\",\"type\":\"input\",\"value\":\"交货日期\"},{\"id\":\"d12\",\"type\":\"input\",\"value\":\"税率\"},{\"id\":\"d13\",\"type\":\"input\",\"value\":\"BOM编号\"},{\"id\":\"d14\",\"type\":\"input\",\"value\":\"源单单号\"},{\"id\":\"d15\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"d16\",\"type\":\"input\",\"value\":\"请购人\"},{\"id\":\"d17\",\"type\":\"input\",\"value\":\"申请理由\"},{\"id\":\"d18\",\"type\":\"input\",\"value\":\"项目名称\"},{\"id\":\"d19\",\"type\":\"input\",\"value\":\"需求部门\"},{\"id\":\"d20\",\"type\":\"input\",\"value\":\"物料类别\"},{\"id\":\"d21\",\"type\":\"input\",\"value\":\"是否预算内\"},{\"id\":\"d22\",\"type\":\"input\",\"value\":\"预算一类\"},{\"id\":\"d23\",\"type\":\"input\",\"value\":\"预算二类\"},{\"id\":\"d24\",\"type\":\"input\",\"value\":\"采购申请备注\"},{\"id\":\"d25\",\"type\":\"input\",\"value\":\"在建工程编号\"},{\"id\":\"d26\",\"type\":\"input\",\"value\":\"建议发料日期\"},{\"id\":\"d99\",\"type\":\"input\",\"value\":\"物料归属\"}]";
 				detailJson = detailJson
 						.replace("物料代码", nullIsEmpty(detail.getItemId().getNumber()))
 						.replace("物料名称", nullIsEmpty(detail.getItemName()))
@@ -336,6 +337,7 @@ public class StringUtil {
 						.replace("需求部门", nullIsEmpty(detail.getBase1().getName()))
 						.replace("物料类别", nullIsEmpty(detail.getBase8().getName()))
 						.replace("是否预算内", nullIsEmpty(detail.getBase6().getName()))
+						.replace("物料归属", nullIsEmpty(detail.getBase3().getName()))
 						.replace("预算一类", nullIsEmpty(detail.getBase4().getName()))
 						.replace("预算二类", nullIsEmpty(detail.getBase5().getName()))
 						.replace("采购申请备注", nullIsEmpty(detail.getText2()))
@@ -355,7 +357,7 @@ public class StringUtil {
 					.replace("结算方式", nullIsEmpty(temp.getSettleStyle().getName()))
 					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
 					.replace("部门测", nullIsEmpty(temp.getDepartment().getName()))
-					.replace("业务员", nullIsEmpty(temp.getEmployee().getName()))
+					.replace("业务员字段", nullIsEmpty(employeeId))
 					.replace("汇率", nullIsEmpty(temp.getExchangeRate()))
 					.replace("摘要", nullIsEmpty(temp.getSummary()))
 					.replace("detailJson", detailResultJson.toString())

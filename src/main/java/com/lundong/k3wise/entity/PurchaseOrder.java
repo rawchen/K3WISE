@@ -77,6 +77,12 @@ public class PurchaseOrder {
 	private NumberAndNameType empId;
 
 	/**
+	 * 制单人
+	 */
+	@JSONField(name = "FBillerID")
+	private NumberAndNameType billerId;
+
+	/**
 	 * 摘要
 	 */
 	@JSONField(name = "FExplanation")

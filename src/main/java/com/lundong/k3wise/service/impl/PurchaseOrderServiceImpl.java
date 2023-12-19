@@ -54,16 +54,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 		List<String> billNumbers = new ArrayList<>();
 		for (PurchaseOrder po : purchaseOrderList) {
-			// 获取业务员
-			NumberAndNameType requester = po.getEmpId();
+			// 获取制单人
+			NumberAndNameType requester = po.getBillerId();
 
 //			// 通过名称获取审核人明细中的手机号或邮箱
 //			String userId = SignUtil.getUserIdByName(requester.getName());
 			// 通过编号获取手机号，再根据手机号获取userId，如果手机号匹配为空就姓名匹配
 			String userId = SignUtil.getUserIdByEmployee(requester);
+			String employeeId = SignUtil.getUserIdByEmployee(po.getEmpId());
 			log.info("userId: {}", userId);
 			// 生成审批实例
-			String instanceCode = SignUtil.generateApprovalInstance(po, Constants.PURCHASE_ORDER_APPROVAL_CODE, userId);
+			String instanceCode = SignUtil.generateApprovalInstance(po, Constants.PURCHASE_ORDER_APPROVAL_CODE, userId, employeeId);
 			if (!StrUtil.isEmpty(instanceCode)) {
 				billNumbers.add(po.getBillNo() + "_" + instanceCode);
 			}

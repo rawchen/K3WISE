@@ -142,12 +142,12 @@ public class SignUtil {
 	 * @param userId
 	 * @return
 	 */
-	public static <T> String generateApprovalInstance(String accessToken, T pr, String approvalCode, String userId) {
+	public static <T> String generateApprovalInstance(String accessToken, T pr, String approvalCode, String userId, String employeeId) {
 		JSONObject object = new JSONObject();
 		object.put("approval_code", approvalCode);
 		object.put("user_id", userId);
-		object.put("form", StringUtil.combinFormString(pr));
-		log.info("combinFormString: {}", StringUtil.combinFormString(pr));
+		object.put("form", StringUtil.combinFormString(pr, employeeId));
+		log.info("combinFormString: {}", StringUtil.combinFormString(pr, employeeId));
 
 		String resultStr = "";
 		JSONObject resultObject = null;
@@ -230,9 +230,9 @@ public class SignUtil {
 	 * @param userId
 	 * @return
 	 */
-	public static <T> String generateApprovalInstance(T pr, String approvalCode, String userId) {
+	public static <T> String generateApprovalInstance(T pr, String approvalCode, String userId, String employeeId) {
 		String accessToken = getAccessToken(Constants.APP_ID_FEISHU, Constants.APP_SECRET_FEISHU);
-		return generateApprovalInstance(accessToken, pr, approvalCode, userId);
+		return generateApprovalInstance(accessToken, pr, approvalCode, userId, employeeId);
 	}
 
 	/**
@@ -307,17 +307,41 @@ public class SignUtil {
 	public static String getUserIdByName(String accessToken, String name) {
 		List<FeishuUser> users = new ArrayList<>();
 		String pageToken = "";
-		while (true) {
-			String resultStr = HttpRequest.get("https://open.feishu.cn/open-apis/ehr/v1/employees" +
-							"?page_size=100&status=2&status=4&user_id_type=user_id&view=basic" +
-							(!StringUtil.isEmpty(pageToken) ? "&page_token=" : "") + pageToken)
-					.header("Authorization", "Bearer " + accessToken)
-					.execute()
-					.body();
-			JSONObject jsonObject = JSON.parseObject(resultStr);
-			if (!"0".equals(jsonObject.getString("code"))) {
+		boolean hasMore = true;
+		while (hasMore) {
+			JSONObject jsonObject = null;
+			String resultStr = "";
+			for (int i = 0; i < 3; i++) {
+				try {
+					HttpResponse response = HttpRequest.get("https://open.feishu.cn/open-apis/ehr/v1/employees" +
+									"?page_size=100&status=2&status=4&user_id_type=user_id&view=basic" +
+									(!StringUtil.isEmpty(pageToken) ? "&page_token=" : "") + pageToken)
+							.header("Authorization", "Bearer " + accessToken)
+							.execute();
+
+					resultStr = response.body();
+					response.close();
+					jsonObject = JSON.parseObject(resultStr);
+				} catch (Exception e) {
+					log.error("通过名称获取userId接口请求失败，重试 {} 次, message: {}, body: {}", i + 1, e.getMessage(), resultStr);
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException ecp) {
+						log.error("sleep异常", ecp);
+					}
+				}
+				if (jsonObject != null && jsonObject.getInteger("code") != 0) {
+					log.error("通过名称获取userId接口请求失败，重试 {} 次, body: {}", i + 1, resultStr);
+				} else if (jsonObject != null && jsonObject.getInteger("code") == 0) {
+					break;
+				}
+			}
+
+			if (jsonObject == null || jsonObject.getInteger("code") != 0) {
+				log.error("通过名称获取userId接口调用失败: {}", resultStr);
 				return "";
 			}
+
 			JSONObject data = (JSONObject) jsonObject.get("data");
 			JSONArray items = (JSONArray) data.get("items");
 			for (int i = 0; i < items.size(); i++) {
@@ -338,10 +362,9 @@ public class SignUtil {
 			if ((boolean) data.get("has_more")) {
 				pageToken = data.getString("page_token");
 			} else {
-				break;
+				hasMore = false;
 			}
 		}
-
 		for (FeishuUser user : users) {
 			if (name.equals(user.getName())) {
 				return user.getUserId();
@@ -403,7 +426,7 @@ public class SignUtil {
 	/**
 	 * 通过金蝶职员编号获取userId
 	 *
-	 * @param requester		职员
+	 * @param requester 职员
 	 * @return
 	 */
 	public static String getUserIdByEmployee(NumberAndNameType requester) {

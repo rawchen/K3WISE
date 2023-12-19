@@ -52,15 +52,16 @@ public class PurchaseContractServiceImpl implements PurchaseContractService {
 
 		List<String> billNumbers = new ArrayList<>();
 		for (PurchaseContract pr : purchaseContractList) {
-			// 获取业务员
-			NumberAndNameType requester = pr.getEmployee();
+			// 获取制单人
+			NumberAndNameType requester = pr.getBillerId();
 
 //			// 通过名称获取审核人明细中的手机号或邮箱
 //			String userId = SignUtil.getUserIdByName(requester.getName());
 			// 通过编号获取手机号，再根据手机号获取userId，如果手机号匹配为空就姓名匹配
 			String userId = SignUtil.getUserIdByEmployee(requester);
+			String employeeId = SignUtil.getUserIdByEmployee(pr.getEmployee());
 			// 生成审批实例
-			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_CONTRACT_APPROVAL_CODE, userId);
+			String instanceCode = SignUtil.generateApprovalInstance(pr, Constants.PURCHASE_CONTRACT_APPROVAL_CODE, userId, employeeId);
 			if (!StrUtil.isEmpty(instanceCode)) {
 				billNumbers.add(pr.getContractNo() + "_" + instanceCode);
 			}
