@@ -1,5 +1,6 @@
 package com.lundong.k3wise.util;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.alibaba.fastjson.JSON;
@@ -436,6 +437,14 @@ public class SignUtil {
 			if (employee.getNumber() != null && requester.getNumber().equals(employee.getNumber())) {
 				employeePhone = employee.getPhone();
 				break;
+			}
+		}
+		if (StrUtil.isEmpty(employeePhone)) {
+			for (Employee employee : employeeList) {
+				if (employee.getName() != null && requester.getName().equals(employee.getName())) {
+					employeePhone = employee.getPhone();
+					break;
+				}
 			}
 		}
 		// 如果手机号不是空的就用手机号匹配
