@@ -94,4 +94,10 @@ public class PurchaseOrder {
 	 */
 	@JSONField(name = "detail")
 	private List<PurchaseOrderDetail> detail;
+
+	/**
+	 * 单据类型
+	 */
+	@JSONField(name = "FHeadSelfP0268")
+	private NumberAndNameType headSelfP0268;
 }

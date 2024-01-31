@@ -60,7 +60,13 @@ public class PurchaseRequisition {
 
 	/**
 	 * 明细
-	 */
+	 */                                                                                         
 	@JSONField(name = "detail")
 	private List<PurchaseRequisitionDetail> detail;
+
+	/**
+	 * 单据类型
+	 */
+	@JSONField(name = "FHeadSelfP0132")
+	private NumberAndNameType headSelfP0132;
 }

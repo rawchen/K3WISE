@@ -449,18 +449,23 @@ public class SignUtil {
 		}
 		// 如果手机号不是空的就用手机号匹配
 		if (!StringUtil.isEmpty(employeePhone)) {
-			log.info("手机匹配：{}", employeePhone);
+			log.info("金蝶获取手机号：{}", employeePhone);
 			String result = getUserIdByMobile(employeePhone);
+			log.info("手机号获取USERID：{}", result);
 			if (StringUtil.isEmpty(result)) {
 				log.info("姓名匹配：{}", requester.getName());
-				return getUserIdByName(requester.getName());
+				String userIdByName = getUserIdByName(requester.getName());
+				log.info("姓名获取USERID：{}", userIdByName);
+				return userIdByName;
 			} else {
 				return result;
 			}
 		} else {
 			// 如果手机号是空的就用名字匹配
 			log.info("姓名匹配：{}", requester.getName());
-			return getUserIdByName(requester.getName());
+			String userIdByName = getUserIdByName(requester.getName());
+			log.info("姓名获取USERID：{}", userIdByName);
+			return userIdByName;
 		}
 	}
 

@@ -84,4 +84,10 @@ public class OutsourcingOrder {
 	 */
 	@JSONField(name = "detail")
 	private List<OutsourcingOrderDetail> detail;
+
+	/**
+	 * 单据类型
+	 */
+	@JSONField(name = "FBase10")
+	private NumberAndNameType base10;
 }

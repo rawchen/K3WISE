@@ -1,8 +1,10 @@
 package com.lundong.k3wise.util;
 
+import cn.hutool.core.util.StrUtil;
 import com.lundong.k3wise.entity.*;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +25,7 @@ public class StringUtil {
 		if (PurchaseRequisition.class.isAssignableFrom(p.getClass())) {
 			// 采购申请单
 			PurchaseRequisition temp = (PurchaseRequisition) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"申请人\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"使用部门\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f0\",\"type\":\"radioV2\",\"value\":\"单据类型\"},{\"id\":\"f1\",\"type\":\"input\",\"value\":\"申请人\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"使用部门\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
@@ -63,12 +65,13 @@ public class StringUtil {
 					.replace("日期", DateTimeFormatter.ofPattern("yyyy年MM月dd日").format(temp.getDate()))
 					.replace("备注", nullIsEmpty(temp.getNote()))
 					.replace("单据编号", nullIsEmpty(temp.getBillNo()))
+					.replace("单据类型", getFormTypeNameToId(temp.getHeadSelfP0132().getName(), 1))
 					.replace("detailJson", detailResultJson.toString());
 			return json;
 		} else if (PurchaseOrder.class.isAssignableFrom(p.getClass())) {
 			// 采购订单
 			PurchaseOrder temp = (PurchaseOrder) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商代码\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"编号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"部门测\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f99\",\"type\":\"contact\",\"value\":[\"业务员字段\"]},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f0\",\"type\":\"radioV2\",\"value\":\"单据类型\"},{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商代码\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"编号\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"部门测\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f99\",\"type\":\"contact\",\"value\":[\"业务员字段\"]},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			// 汇总三字段：项目名称/需求部门/在建工程编号
@@ -136,7 +139,8 @@ public class StringUtil {
 					.replace("detailJson", detailResultJson.toString())
 					.replace("项目汇总金额", nullIsEmpty(projectName))
 					.replace("需求部门汇总金额", nullIsEmpty(demandDepartmentName))
-					.replace("在建工程汇总金额", nullIsEmpty(constructProjectNumberName));
+					.replace("在建工程汇总金额", nullIsEmpty(constructProjectNumberName))
+					.replace("单据类型", getFormTypeNameToId(temp.getHeadSelfP0268().getName(), 2));
 			return json;
 		} else if (PaymentRequest.class.isAssignableFrom(p.getClass())) {
 			// 付款申请单
@@ -293,7 +297,7 @@ public class StringUtil {
 		} else if (OutsourcingOrder.class.isAssignableFrom(p.getClass())) {
 			// 委外订单
 			OutsourcingOrder temp = (OutsourcingOrder) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"部门测\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f99\",\"type\":\"contact\",\"value\":[\"业务员字段\"]},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f0\",\"type\":\"radioV2\",\"value\":\"单据类型\"},{\"id\":\"f1\",\"type\":\"input\",\"value\":\"供应商\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"日期\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"单据编号\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"部门测\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"汇率\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"摘要\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f99\",\"type\":\"contact\",\"value\":[\"业务员字段\"]},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			// 汇总三字段：项目名称/需求部门/在建工程编号
@@ -363,7 +367,8 @@ public class StringUtil {
 					.replace("detailJson", detailResultJson.toString())
 					.replace("项目汇总金额", nullIsEmpty(projectName))
 					.replace("需求部门汇总金额", nullIsEmpty(demandDepartmentName))
-					.replace("在建工程汇总金额", nullIsEmpty(constructProjectNumberName));
+					.replace("在建工程汇总金额", nullIsEmpty(constructProjectNumberName))
+					.replace("单据类型", getFormTypeNameToId(temp.getBase10().getName(), 3));
 			return json;
 		}
 		return null;
@@ -633,4 +638,34 @@ public class StringUtil {
 		}
 		return escaped.toString();
 	}
+
+	public static String getFormTypeNameToId(String name, Integer type) {
+		if (StrUtil.isEmpty(name) || (type != 1 && type != 2 && type != 3)) {
+			return "";
+		}
+		String[] names01 = {"lqykjh36-7u3adp2t4cn-0", "lqykjh36-m5tdzljx46b-1", "lqykjh36-rqgqgipfjz-2", "lqykjh36-yec1nqtnl6-3", "lqykjh36-nht0hjyobyh-4", "lqykjh36-5pq9kekv3lo-5", "lqykjh36-7pq1j8mgw9s-6"};
+		String[] names02 = {"lqykiaau-1lz335v0kwl-0", "lqykiaau-7vvhcua4lp7-1", "lqykiaau-35npfmy11kb-2", "lqykiaau-hoy1yf0lrgw-3", "lqykiaau-4xauz5zn2ut-4", "lqykiaau-xwnbgqh17hq-5", "lqykiaau-c49bdwj2mt-6"};
+		String[] names03 = {"lqykdm31-1y87qgalgky-0", "lqykdm31-rd57fqc7wq8-1", "lqykdm31-j3jli764q6-2", "lqykdm31-i4o9i0x1op-3", "lqykdm31-yckkq21q158-4", "lqykdm31-vvw1i4rbg69-5", "lqykdm31-lrmfvvpfk3-6"};
+		ArrayList<String[]> list = new ArrayList<>();
+		list.add(names01); // 采购申请单
+		list.add(names02); // 采购订单
+		list.add(names03); // 委外订单
+		if ("成套设备".equals(name)) {
+			return list.get(type - 1)[0];
+		} else if ("费用类".equals(name)) {
+			return list.get(type - 1)[1];
+		} else if ("工装治具".equals(name)) {
+			return list.get(type - 1)[2];
+		} else if ("模具".equals(name)) {
+			return list.get(type - 1)[3];
+		} else if ("生产物料".equals(name)) {
+			return list.get(type - 1)[4];
+		} else if ("芯片组".equals(name)) {
+			return list.get(type - 1)[5];
+		} else if ("研发物料".equals(name)) {
+			return list.get(type - 1)[6];
+		} else {
+			return "";
+		}
+    }
 }

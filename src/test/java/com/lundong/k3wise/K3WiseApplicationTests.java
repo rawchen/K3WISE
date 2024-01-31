@@ -153,7 +153,7 @@ class K3WiseApplicationTests {
 
 	@Test
 	void t16() {
-		String userIdByPhone = SignUtil.getUserIdByMobile("123");
+		String userIdByPhone = SignUtil.getUserIdByMobile("17688899758");
 		System.out.println(userIdByPhone);
 	}
 
@@ -203,5 +203,20 @@ class K3WiseApplicationTests {
 		System.out.println(a);
 		SignUtil.generateApprovalInstanceTest("t-g104btexMK22MZDW6UUJNXCSCDRBBGCUKEZK73YL", "4DBD1FFD-5AF5-4875-A0B9-A51C318EE5A2", "fa222fd1",
 				"[{\"id\":\"f1\", \"type\": \"input\", \"value\":\"" + StringUtil.nullIsEmpty(a) + "\"}]");
+	}
+
+	@Test
+	void t21() {
+		String r = StringUtil.getFormTypeNameToId("费用类", 1);
+		System.out.println(r);
+	}
+
+	@Test
+	void t22() {
+		NumberAndNameType t = new NumberAndNameType();
+		t.setName("王富");
+		t.setNumber("王富");
+		String r = SignUtil.getUserIdByEmployee(t);
+		System.out.println(r);
 	}
 }
