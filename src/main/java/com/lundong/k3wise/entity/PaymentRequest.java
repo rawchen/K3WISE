@@ -106,4 +106,10 @@ public class PaymentRequest {
 	 */
 	@JSONField(name = "FText")
 	private String text;
+
+	/**
+	 * 结算方式
+	 */
+	@JSONField(name = "FBase12")
+	private NumberAndNameType base12;
 }

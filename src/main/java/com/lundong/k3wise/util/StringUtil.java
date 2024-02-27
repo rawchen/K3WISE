@@ -145,7 +145,7 @@ public class StringUtil {
 		} else if (PaymentRequest.class.isAssignableFrom(p.getClass())) {
 			// 付款申请单
 			PaymentRequest temp = (PaymentRequest) p;
-			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"单据日期\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"单据号\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"付款类型\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"核算项目类别\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"核算项目名称\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"金额文本\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"核算项目开户银行\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"核算项目银行账号\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"核算项目户名\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"付款理由\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f14\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f15\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f16\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
+			String json = "[{\"id\":\"f1\",\"type\":\"input\",\"value\":\"单据日期\"},{\"id\":\"f2\",\"type\":\"input\",\"value\":\"单据号\"},{\"id\":\"f3\",\"type\":\"input\",\"value\":\"付款类型\"},{\"id\":\"f4\",\"type\":\"input\",\"value\":\"核算项目类别\"},{\"id\":\"f5\",\"type\":\"input\",\"value\":\"核算项目名称\"},{\"id\":\"f6\",\"type\":\"input\",\"value\":\"币别\"},{\"id\":\"f7\",\"type\":\"input\",\"value\":\"金额文本\"},{\"id\":\"f8\",\"type\":\"input\",\"value\":\"核算项目开户银行\"},{\"id\":\"f9\",\"type\":\"input\",\"value\":\"核算项目银行账号\"},{\"id\":\"f10\",\"type\":\"input\",\"value\":\"核算项目户名\"},{\"id\":\"f11\",\"type\":\"input\",\"value\":\"付款理由\"},{\"id\":\"f12\",\"type\":\"input\",\"value\":\"备注\"},{\"id\":\"f13\",\"type\":\"input\",\"value\":\"项目汇总金额\"},{\"id\":\"f14\",\"type\":\"input\",\"value\":\"需求部门汇总金额\"},{\"id\":\"f15\",\"type\":\"input\",\"value\":\"在建工程汇总金额\"},{\"id\":\"f16\",\"type\":\"input\",\"value\":\"业务员\"},{\"id\":\"f17\",\"type\":\"input\",\"value\":\"结算方式\"},{\"id\":\"detail1\",\"type\":\"fieldList\",\"ext\":[],\"value\":[detailJson]}]";
 			// 构建明细
 			StringBuilder detailResultJson = new StringBuilder();
 			// 汇总三字段：项目名称/需求部门/在建工程编号
@@ -207,6 +207,7 @@ public class StringUtil {
 					.replace("单据号", nullIsEmpty(temp.getNumber()))
 					.replace("付款类型", nullIsEmpty(paymentTypeCovert(temp.getPayType())))
 					.replace("核算项目类别", nullIsEmpty(temp.getItemClassId().getName()))
+					.replace("结算方式", nullIsEmpty(temp.getBase12().getName()))
 					.replace("核算项目名称", nullIsEmpty(temp.getCustomer().getName()))
 					.replace("币别", nullIsEmpty(temp.getCurrencyId().getName()))
 					.replace("金额文本", nullIsEmpty(temp.getAmountFor()))
